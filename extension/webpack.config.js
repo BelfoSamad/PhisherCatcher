@@ -9,20 +9,14 @@ const FileManagerPlugin = require('filemanager-webpack-plugin');
 module.exports = {
   entry: {
     firebase_config: './src/firebase_config.js',
-    auth_offscreen: './src/offscreen/auth/auth_offscreen.js',
-    data_offscreen: './src/offscreen/data/data_offscreen.js',
+    offscreen: './src/offscreen/offscreen.js',
   },
   plugins: [
     new CleanWebpackPlugin({cleanStaleWebpackAssets: false}),
     new HtmlWebpackPlugin({
-      template: path.join(__dirname, "src", "offscreen/auth", "auth_offscreen.html"),
-      filename: "auth_offscreen.html",
-      chunks: ["auth_offscreen"]
-    }),
-    new HtmlWebpackPlugin({
-      template: path.join(__dirname, "src", "offscreen/data", "data_offscreen.html"),
-      filename: "data_offscreen.html",
-      chunks: ["data_offscreen"]
+      template: path.join(__dirname, "src", "offscreen", "offscreen.html"),
+      filename: "offscreen.html",
+      chunks: ["offscreen"]
     }),
     new CopyWebpackPlugin({
       patterns: [
@@ -36,10 +30,8 @@ module.exports = {
       events: {
         onEnd: {
           move: [
-            {source: 'dist/auth_offscreen.html', destination: 'dist/offscreen/auth/auth_offscreen.html'},
-            {source: 'dist/auth_offscreen.js', destination: 'dist/offscreen/auth/auth_offscreen.js'},
-            {source: 'dist/data_offscreen.html', destination: 'dist/offscreen/data/data_offscreen.html'},
-            {source: 'dist/data_offscreen.js', destination: 'dist/offscreen/data/data_offscreen.js'},
+            {source: 'dist/offscreen.html', destination: 'dist/offscreen/offscreen.html'},
+            {source: 'dist/offscreen.js', destination: 'dist/offscreen/offscreen.js'},
             {source: 'dist/script.js', destination: 'dist/content/script.js'},
             {source: 'dist/styles.css', destination: 'dist/content/styles.css'},
           ]

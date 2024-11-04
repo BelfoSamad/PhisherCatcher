@@ -1,9 +1,9 @@
 //------------------------------- Declarations
 let creating; // A global promise to avoid concurrency issues
 
-//------------------------------- SidePanel Behavior
-chrome.sidePanel
-  .setPanelBehavior({openPanelOnActionClick: true})
+//------------------------------- Starting
+chrome.runtime.onStartup(async () => { await setupOffscreenDocument("./offscreen/offscreen.html"); });
+chrome.sidePanel.setPanelBehavior({openPanelOnActionClick: true})
   .catch((error) => console.error(error));
 
 //------------------------------- Tab Handling
@@ -15,30 +15,6 @@ chrome.tabs.onRemoved.addListener((tabId, removeInfo) => {
 });
 chrome.tabs.onActivated.addListener((activeInfo) => {
   //TODO: Handle when tab switch
-});
-
-//------------------------------- Handle Communication w/ Popup
-chrome.runtime.onMessage.addListener(async function (message, _sender, sendResponse) {
-  if (message.action.split("_")[0] == "auth") {
-    await setupOffscreenDocument("./offscreen/auth/auth_offscreen.html");
-    switch (message.action.split("_")[1]) {
-      case "login":
-        //const loginRes = await chrome.runtime.sendMessage({target: "offscreen_auth", action: message.action});
-        break;
-      case "register":
-        break;
-      case "isLoggedIn":
-        break;
-      case "logout":
-        break;
-    }
-  } else {
-    await setupOffscreenDocument("./offscreen/data/data_offscreen.html");
-    switch (message.action.split("_")[1]) {
-      case "...":
-        break;
-    }
-  }
 });
 
 //------------------------------- Handle Offscreen Documents
