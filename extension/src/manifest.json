@@ -1,0 +1,20 @@
+{
+    "manifest_version": 3,
+    "name": "PhisherCatcher",
+    "description": "PhisherCatcher is a browser extension that uses LLMs to analyze website attributes like domain name, SSL certificate, and WHOIS data to detect phishing attempts and verify site legitimacy.",
+    "version": "1.0.0",
+    "permissions": ["tabs", "activeTab", "sidePanel", "offscreen"],
+    "background": {
+      "service_worker": "background.js"
+    },
+    "content_scripts": [
+      {
+        "js": ["./content/script.js"],
+        "css": ["./content/styles.css"],
+        "matches": ["<all_urls>"]
+      }
+    ],
+    "content_security_policy": {
+        "extension_pages": "script-src 'self'; object-src 'self'"
+    }
+}
