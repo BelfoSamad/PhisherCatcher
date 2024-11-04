@@ -1,0 +1,181 @@
+.container {
+    display: flex;
+    flex-direction: column;
+    padding: 0 16px;
+    height: 100%;
+}
+
+mat-toolbar {
+    background-color: transparent;
+    padding-right: 0px;
+    padding-top: 16px;
+}
+
+.spacer {
+    flex: 1 1 auto;
+}
+
+.topbar-logo {
+    font-size: 32px;
+    color: var(--sys-secondary);
+    font-family: "Protest Guerrilla", sans-serif;
+}
+
+.navigation-buttons {
+    display: flex;
+    gap: 10px;
+}
+
+.content {
+    display: flex;
+    flex: 1;
+    justify-content: center;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+}
+
+.analyze {
+    display: inline-flex;
+    align-self: center;
+    width: 128px;
+    margin-bottom: 48px;
+    padding-top: 24px;
+    padding-bottom: 24px;
+}
+
+.analyze span {
+    font-family: "Poppins", sans-serif;
+    font-weight: 700;
+}
+
+.domain {
+    font-family: "Poppins", sans-serif;
+    width: 100%;
+    font-weight: 700;
+    font-size: 14px;
+    margin: 0 16px 16px 16px;
+    white-space: normal;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+}
+
+.animated-gradient {
+    width: 90%;
+    height: 256px;
+    border-radius: 16px;
+    background: linear-gradient(var(--a), #ffbe0b, #fb5607, #ff006e, #8338ec, #3a86ff);
+    background-size: 200% 200%;
+    animation: moveGradient 5s infinite alternate;
+}
+
+.verdict-box {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-family: "Poppins", sans-serif;
+    padding: 16px;
+    margin-top: 8px;
+    border-radius: 4px;
+    color: white;
+    font-size: 14px;
+}
+
+.legit {
+    background-color: #4caf50;
+}
+
+.suspicious {
+    background-color: #ff9800;
+}
+
+.malicious {
+    background-color: #f44336;
+}
+
+.verdict-box button {
+    text-decoration: underline;
+}
+
+button {
+    background: none;
+    border: none;
+    color: white;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.percentage-container {
+    position: relative;
+    display: inline-block;
+    width: 196px;
+    height: 196px;
+    margin-top: 16px;
+}
+
+.percentage-label {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    font-size: 24px;
+    font-family: "Poppins", sans-serif;
+    font-weight: 700;
+    transform: translate(-50%, -100%);
+}
+
+.reason-card {
+    width: 90%;
+    height: 256px;
+    margin-top: 16px;
+    background-color: transparent;
+}
+
+.reason {
+    font-family: "Poppins", sans-serif;
+    font-weight: 500;
+    overflow-y: auto;
+    margin: auto;
+    padding: 0 16px;
+}
+
+.scroll-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 16px;
+}
+
+.indicators {
+    display: flex;
+    gap: 10px;
+}
+
+.indicators span {
+    font-size: 24px;
+    color: var(--mdc-elevated-card-container-color);
+}
+
+.indicators .active {
+    color: var(--sys-secondary);
+}
+
+.navigation-buttons {
+    display: flex;
+    gap: 10px;
+}
+
+@property --a {
+    syntax: '<angle>';
+    inherits: false;
+    initial-value: 0deg;
+}
+
+@keyframes moveGradient {
+    0% {
+        --a: 0deg;
+    }
+
+    100% {
+        --a: 360deg;
+    }
+}

@@ -1,3 +1,4 @@
+///<reference types="chrome"/>
 import { Injectable } from '@angular/core';
 
 @Injectable({
@@ -5,5 +6,8 @@ import { Injectable } from '@angular/core';
 })
 export class CheckerService {
 
-  constructor() { }
+  async checkWebsite() {
+    return await chrome.runtime.sendMessage({action: "check"});
+  }
+
 }

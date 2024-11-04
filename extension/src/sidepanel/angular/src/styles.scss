@@ -4,14 +4,14 @@
 @include cdk.overlay();
 
 // Define the theme object.
-$Ws1H-theme: mat.define-theme((color: (theme-type: dark, use-system-variables: true, ), density: (scale: 0, )));
+$phishserCatcher-theme: mat.define-theme((color: (theme-type: dark, use-system-variables: true, ), density: (scale: 0, )));
 
 // Include theme styles.
 :root {
-  @include mat.all-component-themes($Ws1H-theme);
-  @include mat.typography-hierarchy($Ws1H-theme);
-  @include mat.system-level-colors($Ws1H-theme);
-  @include mat.system-level-typography($Ws1H-theme);
+  @include mat.all-component-themes($phishserCatcher-theme);
+  @include mat.typography-hierarchy($phishserCatcher-theme);
+  @include mat.system-level-colors($phishserCatcher-theme);
+  @include mat.system-level-typography($phishserCatcher-theme);
 }
 
 html, body {

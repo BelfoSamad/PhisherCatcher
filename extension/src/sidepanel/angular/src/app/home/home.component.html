@@ -1,1 +1,60 @@
-<p>home works!</p>
+<div class="container">
+    <mat-toolbar>
+        <span class="topbar-logo">Catcher</span>
+        <span class="spacer"></span>
+        <div class="navigation-buttons">
+            <button mat-icon-button (click)="goSettings()">
+                <mat-icon>settings</mat-icon>
+            </button>
+            <button mat-icon-button (click)="logout()">
+                <mat-icon>logout</mat-icon>
+            </button>
+        </div>
+    </mat-toolbar>
+    <div class="content">
+        <p class="domain mat-title-large">{{url}}</p>
+        @if(analysis == undefined) {
+        @if (!isAnalyzing) {
+        <button class="analyze" mat-flat-button (click)="analyzeWebsite()">
+            <span class="mat-label-large">Analyze</span>
+        </button>
+        }@else {
+        <div class="animated-gradient"></div>
+        }
+        } @else if (analysis == null) {
+        /////////////////////////////////////// TODO: Error Happened
+        } @else {
+        <div class="verdict-box" [ngClass]="analysis.decision.toString().toLowerCase()">
+            <span>{{ analysis.verdict }}, </span>
+            <button (click)="handleBlock()">Block/Unblock</button>
+        </div>
+        @if(currentIndex == -1) {
+        <div class="percentage-container">
+            <mat-progress-spinner [mode]="'determinate'" [strokeWidth]="8" [diameter]="196"
+                [value]="analysis.percentage" color="secondary"></mat-progress-spinner>
+            <p class="percentage-label">{{analysis.percentage}}%</p>
+        </div>
+        } @else {
+        <mat-card appearance="outlined" class="reason-card">
+            <mat-card-content class="reason mat-body-large">
+                {{ analysis.reasons![currentIndex] }}
+            </mat-card-content>
+        </mat-card>
+        }
+        <div class="scroll-container" *ngIf="analysis.reasons != null && analysis.reasons.length > 0">
+            <div class="indicators">
+                <span [class.active]="currentIndex === -1">•</span>
+                <span *ngFor="let item of analysis.reasons; let i = index" [class.active]="i === currentIndex">•</span>
+            </div>
+            <div class="navigation-buttons">
+                <button mat-icon-button (click)="goToPrevious()" [disabled]="currentIndex === -1">
+                    <mat-icon>chevron_left</mat-icon>
+                </button>
+                <button mat-icon-button (click)="goToNext()" [disabled]="currentIndex === analysis.reasons.length - 1">
+                    <mat-icon>chevron_right</mat-icon>
+                </button>
+            </div>
+        </div>
+        }
+    </div>
+</div>
