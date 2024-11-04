@@ -1,7 +1,7 @@
 import {app} from '../firebase_config';
 import {getAuth, createUserWithEmailAndPassword} from 'firebase/auth';
 import {getFirestore, getDoc, doc} from 'firebase/firestore';
-import {getFunctions, getDoc} from 'firebase/functions';
+import {getFunctions} from 'firebase/functions';
 
 const auth = getAuth(app);
 const db = getFirestore(app);

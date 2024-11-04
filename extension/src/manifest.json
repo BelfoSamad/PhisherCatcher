@@ -7,6 +7,9 @@
     "background": {
       "service_worker": "background.js"
     },
+    "side_panel": {
+      "default_path": "./sidepanel/index.html"
+    },
     "content_scripts": [
       {
         "js": ["./content/script.js"],

@@ -4,6 +4,7 @@ const HtmlWebpackPlugin = require('html-webpack-plugin');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
 const TerserPlugin = require("terser-webpack-plugin");
 const FileManagerPlugin = require('filemanager-webpack-plugin');
+const {rename} = require('fs');
 
 
 module.exports = {
@@ -22,8 +23,8 @@ module.exports = {
       patterns: [
         {from: './src/manifest.json'},
         {from: './src/background.js'},
-        {from: './src/content/script.js'},
-        {from: './src/content/styles.css'}
+        {from: './src/content/', to: './content/'},
+        {from: './src/sidepanel/prod/browser/', to: './sidepanel/'},
       ],
     }),
     new FileManagerPlugin({
@@ -32,9 +33,7 @@ module.exports = {
           move: [
             {source: 'dist/offscreen.html', destination: 'dist/offscreen/offscreen.html'},
             {source: 'dist/offscreen.js', destination: 'dist/offscreen/offscreen.js'},
-            {source: 'dist/script.js', destination: 'dist/content/script.js'},
-            {source: 'dist/styles.css', destination: 'dist/content/styles.css'},
-          ]
+          ],
         }
       }
     })

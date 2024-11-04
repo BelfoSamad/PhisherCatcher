@@ -2,7 +2,7 @@
 let creating; // A global promise to avoid concurrency issues
 
 //------------------------------- Starting
-chrome.runtime.onStartup(async () => { await setupOffscreenDocument("./offscreen/offscreen.html"); });
+setupOffscreenDocument("./offscreen/offscreen.html");
 chrome.sidePanel.setPanelBehavior({openPanelOnActionClick: true})
   .catch((error) => console.error(error));
 
