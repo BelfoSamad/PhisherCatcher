@@ -1,1 +1,30 @@
-/* You can add global styles to this file, and also import other style files */
+@use '@angular/material' as mat;
+@use '@angular/cdk' as cdk;
+@include mat.core();
+@include cdk.overlay();
+
+// Define the theme object.
+$Ws1H-theme: mat.define-theme((color: (theme-type: dark, use-system-variables: true, ), density: (scale: 0, )));
+
+// Include theme styles.
+:root {
+  @include mat.all-component-themes($Ws1H-theme);
+  @include mat.typography-hierarchy($Ws1H-theme);
+  @include mat.system-level-colors($Ws1H-theme);
+  @include mat.system-level-typography($Ws1H-theme);
+}
+
+html, body {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  font-family: Roboto, "Helvetica Neue", sans-serif;
+  width: 100%;
+}
+
+* {
+  scrollbar-width: auto;
+  scrollbar-color: var(--sys-outline-variant) var(--sys-outline);
+}
