@@ -1,3 +1,5 @@
+import { defaults } from "./configs";
+
 //------------------------------- Declarations
 let creating; // A global promise to avoid concurrency issues
 let activeTabId = -1;
@@ -38,14 +40,18 @@ chrome.tabs.onActivated.addListener((activeInfo) => {
 
 //------------------------------- Check URL
 async function checkUrl(url) {
-  // extract domain
-  const domain = new URL(url).hostname.split(":")[0].toLowerCase();
-
-  // TODO: check if domain is well known
-
-  // check in db/agent
-  const analysis = await chrome.runtime.sendMessage({target: "offscreen", action: "check", domain: domain, url: url});
-  return analysis;
+  chrome.storage.local.get(["enableAutoScan"], async (res) => {
+    console.log("Should Check?");
+    if (res['enableAutoScan'] ?? defaults.enableAutoScan) {
+      console.log("Checking")
+      // extract domain
+      const domain = new URL(url).hostname.split(":")[0].toLowerCase();
+      // TODO: check if domain is well known
+      // check in db/agent
+      const analysis = await chrome.runtime.sendMessage({target: "offscreen", action: "check", domain: domain, url: url});
+      return analysis;
+    } else return null;
+  });
 }
 
 //------------------------------- Handle Offscreen Documents

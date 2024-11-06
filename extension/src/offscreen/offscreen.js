@@ -1,4 +1,4 @@
-import {app} from '../firebase_config';
+import {app} from '../configs';
 import {getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword} from 'firebase/auth';
 import {getFirestore, getDoc, doc} from 'firebase/firestore';
 import {getFunctions, httpsCallable} from 'firebase/functions';

@@ -7,8 +7,9 @@ const FileManagerPlugin = require('filemanager-webpack-plugin');
 
 module.exports = {
   entry: {
-    firebase_config: './src/firebase_config.js',
+    config: './src/configs.js',
     offscreen: './src/offscreen/offscreen.js',
+    background: './src/background.js',
   },
   plugins: [
     new CleanWebpackPlugin({cleanStaleWebpackAssets: false}),
@@ -20,7 +21,6 @@ module.exports = {
     new CopyWebpackPlugin({
       patterns: [
         {from: './src/manifest.json'},
-        {from: './src/background.js'},
         {from: './src/content/', to: './content/'},
         {from: './src/sidepanel/prod/browser/'},
       ],
