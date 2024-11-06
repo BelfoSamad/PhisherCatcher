@@ -1,0 +1,25 @@
+<div class="container">
+    <mat-toolbar>
+        <button id="goBack" mat-mini-fab (click)="goBack()">
+            <mat-icon>keyboard_arrow_left</mat-icon>
+        </button>
+        <h4>Settings</h4>
+    </mat-toolbar>
+    <form [formGroup]="settingsForm!!" (ngSubmit)="onSubmit()">
+        <div class="single_setting">
+            <span>Enable Auto Scan</span>
+            <mat-slide-toggle formControlName="enableAutoScan"></mat-slide-toggle>
+        </div>
+        <div class="single_setting">
+            <span>Enable Auto Block</span>
+            <mat-slide-toggle formControlName="enableAutoBlock"></mat-slide-toggle>
+        </div>
+        <div class="single_setting">
+            <span>Enable Unblocking</span>
+            <mat-slide-toggle formControlName="enableUnblocking"></mat-slide-toggle>
+        </div>
+        <button id="submit" mat-flat-button type="submit">
+            <span class="mat-label-large">Save Settings</span>
+        </button>
+    </form>
+</div>
