@@ -1,4 +1,4 @@
 node_modules/
 dist/
 src/firebase_config.js
-src/sidepanel/prod
+src/sidepanel/prod/
