@@ -38,7 +38,7 @@ export class SettingsComponent {
     });
 
     // get settings from storage
-    chrome.storage.session.get(["enableAutoScan", "enableAutoBlock", "enableUnblocking"], (res) => {
+    chrome.storage.local.get(["enableAutoScan", "enableAutoBlock", "enableUnblocking"], (res) => {
       this.settingsForm?.setValue({
         enableAutoScan: res['enableAutoScan'] ?? true,
         enableAutoBlock: res['enableAutoBlock'] ?? true,
@@ -48,7 +48,7 @@ export class SettingsComponent {
   }
 
   onSubmit(): void {
-    chrome.storage.session.set({
+    chrome.storage.local.set({
       enableAutoScan: this.settingsForm?.value.enableAutoScan,
       enableAutoBlock: this.settingsForm?.value.enableAutoBlock,
       enableUnblocking: this.settingsForm?.value.enableUnblocking
