@@ -1,6 +1,6 @@
-import {app} from '../configs';
+import {app, defaults} from '../configs';
 import {getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword} from 'firebase/auth';
-import {getFirestore, getDoc, doc} from 'firebase/firestore';
+import {getFirestore, getDoc, setDoc, doc} from 'firebase/firestore';
 import {getFunctions, httpsCallable} from 'firebase/functions';
 
 const auth = getAuth(app);
@@ -19,18 +19,26 @@ function handleChromeMessages(message, _sender, sendResponse) {
         //--------------------------- Authentication
         case "register":
             (async () => {
-                await createUserWithEmailAndPassword(auth, message.email, message.password);
+                let userCreds = await createUserWithEmailAndPassword(auth, message.email, message.password);
+                await setDoc(doc(db, "users", userCreds.user.uid), defaults);
                 sendResponse({done: true});
             })();
             break;
         case "login":
             (async () => {
-                await signInWithEmailAndPassword(auth, message.email, message.password);
-                sendResponse({done: true});
+                let userCreds = await signInWithEmailAndPassword(auth, message.email, message.password);
+                getDoc(doc(db, "users", userCreds.user.uid)).then(async querySnapshot => {
+                    sendResponse({done: true, settings: querySnapshot.exists() ? querySnapshot.data() : defaults});
+                });
             })();
             break;
         case "isLoggedIn":
             sendResponse({isLoggedIn: auth.currentUser != null});
+            break;
+        case "syncSettings":
+            (async () => {
+                await setDoc(doc(db, "users", auth.currentUser.uid), message.settings);
+            })();
             break;
         case "logout":
             auth.signOut();

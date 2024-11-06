@@ -1,6 +1,6 @@
 ///<reference types="chrome"/>
-import {ChangeDetectorRef, Component, inject} from '@angular/core';
-import {FormBuilder, FormGroup, Validators, FormsModule, ReactiveFormsModule} from '@angular/forms';
+import {Component, inject} from '@angular/core';
+import {FormBuilder, FormGroup, FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {MatButtonModule} from '@angular/material/button';
 import {MatSlideToggleModule} from '@angular/material/slide-toggle';
 import {MatSnackBar} from '@angular/material/snack-bar';
@@ -48,11 +48,14 @@ export class SettingsComponent {
   }
 
   onSubmit(): void {
-    chrome.storage.local.set({
+    const settings = {
       enableAutoScan: this.settingsForm?.value.enableAutoScan,
       enableAutoBlock: this.settingsForm?.value.enableAutoBlock,
       enableUnblocking: this.settingsForm?.value.enableUnblocking
-    }, () => {
+    };
+    chrome.storage.local.set(settings, () => {
+      // sync with firestore
+      chrome.runtime.sendMessage({target: "offscreen", action: "syncSettings", settings: settings});
       //TODO: show snackbar
       this.router.navigate(['']);
     });
