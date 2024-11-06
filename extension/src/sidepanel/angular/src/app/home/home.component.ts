@@ -1,3 +1,4 @@
+///<reference types="chrome"/>
 import {Component, inject, OnInit} from '@angular/core';
 import {Router} from '@angular/router';
 import {CheckerService} from '../services/checker.service';
@@ -38,6 +39,15 @@ export class HomeComponent implements OnInit {
 
   ngOnInit(): void {
     //TODO: get url from background!
+    chrome.runtime.onMessage.addListener((message) => {
+      if(message.target == "sidepanel") console.log("Sidepanel: Received Message");
+      if(message.target == "sidepanel") switch(message.action) {
+        case "set_analysis":
+          console.log("Sidepanel: received analysis - " + message.analysis);
+          this.analysis = message.analysis;
+          break;
+      }
+    });
   }
 
   analyzeWebsite() {
@@ -62,8 +72,8 @@ export class HomeComponent implements OnInit {
   }
 
   async logout(): Promise<void> {
-    this.authService.logout().then(res => {
-      if (res.done) this.router.navigate(['login']);
+    this.authService.logout().then(_ => {
+      this.router.navigate(['login']);
     });
   }
 
