@@ -7,19 +7,27 @@ import {Injectable} from '@angular/core';
 export class AuthService {
 
   async register(email: string, password: string) {
-    return await chrome.runtime.sendMessage({action: "register", email: email, password: password});
+    return new Promise((resolve) => {
+      chrome.runtime.sendMessage({target: "offscreen", action: "register", email: email, password: password}, (response) => {
+        resolve(response.done);
+      });
+    });
   }
 
   async login(email: string, password: string) {
-    return await chrome.runtime.sendMessage({action: "login", email: email, password: password});
+    return new Promise((resolve) => {
+      chrome.runtime.sendMessage({target: "offscreen", action: "login", email: email, password: password}, (response) => {
+        resolve(response.done);
+      });
+    });
   }
 
   async isLoggedIn() {
-    return (await chrome.runtime.sendMessage({action: "isLoggedIn"})).isLoggedIn;
+    return (await chrome.runtime.sendMessage({target: "offscreen", action: "isLoggedIn"})).isLoggedIn;
   }
 
   async logout() {
-    return await chrome.runtime.sendMessage({action: "logout"});
+    return await chrome.runtime.sendMessage({target: "offscreen", action: "logout"});
   }
 
 }

@@ -40,7 +40,7 @@ export class LoginComponent implements OnInit {
     });
   }
 
-  onSubmit(): void {
+  async onSubmit(): Promise<void> {
     if (this.loginForm!!.valid) {
       this.loginLoading = true
       this.authService.login(
@@ -48,7 +48,7 @@ export class LoginComponent implements OnInit {
         this.loginForm!!.value.password
       ).then(res => {
         this.loginLoading = false
-        if(res.done) this.router.navigate(['']) //go home
+        if(res) this.router.navigate(['']) //go home
       }).catch(err => {
         this.loginLoading = false
         this._snackBar.open(err.message)
