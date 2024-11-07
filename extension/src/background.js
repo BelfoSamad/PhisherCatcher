@@ -1,4 +1,4 @@
-import { defaults } from "./configs";
+import {defaults} from "./configs";
 
 //------------------------------- Declarations
 let creating; // A global promise to avoid concurrency issues
@@ -17,40 +17,61 @@ chrome.runtime.onMessage.addListener((message) => {
 //------------------------------- Tab Handling
 chrome.tabs.onUpdated.addListener(async (tabId, changeInfo, tab) => {
   if (tabId == activeTabId & changeInfo.status == "complete") {
-    // make the check
-    const analysis = await checkUrl(tab.url);
-    tabs.set(activeTabId, analysis);
-    // send analysis to sidepanel
-    chrome.runtime.sendMessage({target: "sidepanel", action: "set_analysis", analysis: tabs[activeTabId]});
-    console.log(tabs.get(activeTabId));
+    // extract domain
+    const domain = new URL(tab.url).hostname.split(":")[0].toLowerCase();
+    // check if check is required
+    if (preCheck(tab.url, domain)) {
+      // make the check
+      const analysis = await checkUrl(tab.url);
+      tabs.set(activeTabId, analysis);
+      // send analysis to sidepanel
+      chrome.runtime.sendMessage({target: "sidepanel", action: "analysis", analysis: tabs[activeTabId], allowCheck: analysis == undefined});
+    }
   }
 });
 chrome.tabs.onRemoved.addListener((tabId, _removeInfo) => {
   tabs.delete(tabId);
-  console.log(tabs.has(tabId));
 });
 chrome.tabs.onActivated.addListener((activeInfo) => {
   activeTabId = activeInfo.tabId;// update activeTabId
   // the tab is newly created
-  if (!tabs.has(activeTabId)) tabs.set(activeTabId, null);
+  if (!tabs.has(activeTabId)) tabs.set(activeTabId, undefined);
   // send details to sidepanel
-  chrome.runtime.sendMessage({target: "sidepanel", action: "set_analysis", analysis: tabs[activeTabId]});
-  console.log(tabs.get(activeTabId));
+  chrome.runtime.sendMessage({target: "sidepanel", action: "analysis", analysis: tabs[activeTabId], allowCheck: false});
 });
 
 //------------------------------- Check URL
-async function checkUrl(url) {
+function preCheck(url, domain) {
+  // check if new tab or chrome related tab
+  if (url.startsWith("chrome://") || domain === "newtab") {
+    tabs.set(activeTabId, null);
+    chrome.runtime.sendMessage({target: "sidepanel", action: "analysis", analysis: tabs[activeTabId]});
+    return false;
+  }
+
+  // reload check, do nothing
+  if (tabs[activeTabId].id == domain) return false;
+
+  // check if domain already exists
+  for (const value of tabs.values()) {
+    if (value.id === domain) {
+      tabs.set(activeTabId, value);
+      chrome.runtime.sendMessage({target: "sidepanel", action: "analysis", analysis: tabs[activeTabId]});
+      return false;
+    }
+  }
+
+  return true;
+}
+
+async function checkUrl(domain) {
   chrome.storage.local.get(["enableAutoScan"], async (res) => {
-    console.log("Should Check?");
     if (res['enableAutoScan'] ?? defaults.enableAutoScan) {
-      console.log("Checking")
-      // extract domain
-      const domain = new URL(url).hostname.split(":")[0].toLowerCase();
       // TODO: check if domain is well known
       // check in db/agent
-      const analysis = await chrome.runtime.sendMessage({target: "offscreen", action: "check", domain: domain, url: url});
+      const analysis = await chrome.runtime.sendMessage({target: "offscreen", action: "check", domain: domain});
       return analysis;
-    } else return null;
+    } else return undefined;
   });
 }
 

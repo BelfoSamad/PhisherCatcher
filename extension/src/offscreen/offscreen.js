@@ -48,8 +48,16 @@ function handleChromeMessages(message, _sender, sendResponse) {
             getDoc(doc(db, "websites", message.domain)).then(async querySnapshot => {
                 if (!querySnapshot.exists()) {
                     const analyzeWebsite = httpsCallable(functions, 'analyzeWebsiteFlow');
-                    analyzeWebsite({url: message.url}).then(res => {sendResponse(res.data)});
-                } else sendResponse(querySnapshot.data());
+                    analyzeWebsite({url: message.url}).then(res => {
+                        const analysis = res.data;
+                        analysis["id"] = message.domain;
+                        sendResponse(analysis);
+                    });
+                } else {
+                    const analysis = querySnapshot.data();
+                    analysis["id"] = message.domain;
+                    sendResponse(analysis);
+                }
             });
             break;
     }
