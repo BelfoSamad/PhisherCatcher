@@ -35,14 +35,16 @@ export class SettingsComponent {
       enableAutoScan: false,
       enableAutoBlock: false,
       enableUnblocking: false,
+      enableForceBlock: false,
     });
 
     // get settings from storage
-    chrome.storage.local.get(["enableAutoScan", "enableAutoBlock", "enableUnblocking"], (res) => {
+    chrome.storage.local.get(["enableAutoScan", "enableAutoBlock", "enableUnblocking", "enableForceBlock"], (res) => {
       this.settingsForm?.setValue({
         enableAutoScan: res['enableAutoScan'] ?? true,
         enableAutoBlock: res['enableAutoBlock'] ?? true,
         enableUnblocking: res['enableUnblocking'] ?? true,
+        enableForceBlock: res['enableForceBlock'] ?? true,
       });
     });
   }
@@ -51,7 +53,8 @@ export class SettingsComponent {
     const settings = {
       enableAutoScan: this.settingsForm?.value.enableAutoScan,
       enableAutoBlock: this.settingsForm?.value.enableAutoBlock,
-      enableUnblocking: this.settingsForm?.value.enableUnblocking
+      enableUnblocking: this.settingsForm?.value.enableUnblocking,
+      enableForceBlock: this.settingsForm?.value.enableForceBlock,
     };
     chrome.storage.local.set(settings, () => {
       // sync with firestore

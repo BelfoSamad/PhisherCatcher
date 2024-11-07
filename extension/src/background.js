@@ -66,7 +66,7 @@ function preCheck(url, domain) {
 
 function checkUrl(domain) {
   return new Promise((resolve) => {
-    chrome.storage.local.get(["enableAutoScan"], async (res) => {
+    chrome.storage.local.get(["enableAutoScan", "enableAutoBlock", "enableForceBlock"], async (res) => {
       if (res['enableAutoScan'] ?? defaults.enableAutoScan) {
         // start animation
         chrome.tabs.sendMessage(activeTabId, {action: "start_animation"});
@@ -81,8 +81,16 @@ function checkUrl(domain) {
           percentage: Math.floor(Math.random() * 100),
           verdict: "This is a verdict for the website, either do or not",
           reasons: ["This is reason 1", "This is reason 2", "This is reason 3"],
-          decision: ["Legit", "Suspicious", "Malicious"][Math.floor(Math.random() * 2)]
+          decision: ["Malicious"][Math.floor(Math.random() * 2)]
         }
+
+        // make action if allowed before returning analysis
+        // TODO: Clean this
+        if ((res['enableAutoBlock'] ?? defaults.enableAutoBlock)
+          && (analysis.decision == "Malicious"
+            || (analysis.decision == "Suspicious"
+              && (res['enableForceBlock'] ?? defaults.enableForceBlock))))
+          chrome.tabs.sendMessage(activeTabId, {action: "block_tab"});
         resolve(analysis);
       } else resolve(undefined);
     });

@@ -15,5 +15,6 @@ export {app}
 export const defaults = {
   enableAutoScan: true,
   enableAutoBlock: true,
+  enableForceBlock: true,
   enableUnblocking: true
 }
