@@ -33,9 +33,8 @@ export async function checkRecords(debug: boolean, domain: string, whoisApiKey: 
 
     try {
         const tldInfo = checkTLD(domain);
-        if (tldInfo.tldSuspicionSeverity != null) {
+        if (tldInfo.tldSuspicionSeverity != null)
             suspicions.push(`Suspecious TLD of Severity: ${tldInfo.tldSuspicionSeverity}`);
-        }
     } catch (err) {
         console.log("An error caught, ignore!. Error: " + err);
     }

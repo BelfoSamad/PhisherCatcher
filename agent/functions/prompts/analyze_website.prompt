@@ -11,7 +11,7 @@ output:
   schema:
     percentage: integer, percentage of suspicion of the URL, 0 means legit and 100 means definitely scam
     verdict: string, final decision on whether the user should continue accessing the URL or avoid it
-    decision?(enum, decision of the analysis about the website based on percentage): [Legit, Suspicious, Malicious]
+    decision(enum, decision of the analysis about the website based on percentage): [Legit, Suspicious, Malicious]
     reasons?(array): string, reasons why the URL might be a scam/phishing link. If the URL is legit return null
 
 ---

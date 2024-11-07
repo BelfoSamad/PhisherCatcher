@@ -19,7 +19,7 @@ const googleAIapiKey = defineSecret("GOOGLE_GENAI_API_KEY");
 const whoisApiKey = defineSecret("WHOIS_API_KEY");
 
 // ----------------------------------------- Initializations
-const debug = true;
+const debug = false;
 const app = initializeApp({credential: debug ? credential.cert("./phishercatcher-creds.json") : applicationDefault()});
 const firestore = getFirestore(app);
 if (debug) {
@@ -47,11 +47,12 @@ export const analyzeWebsiteFlow = debug ? defineFlow(
   {
     name: "analyzeWebsiteFlow",
     inputSchema: z.object({
-      userId: z.string(),
       url: z.string(),
     }),
     outputSchema: z.object({
-      decision: z.number(),
+      percentage: z.number(),
+      verdict: z.string(),
+      decision: z.string(),
       reasons: z.array(z.string()),
     }),
   },
@@ -64,11 +65,12 @@ export const analyzeWebsiteFlow = debug ? defineFlow(
       cors: true,
     },
     inputSchema: z.object({
-      userId: z.string(),
       url: z.string(),
     }),
     outputSchema: z.object({
-      decision: z.number(),
+      percentage: z.number(),
+      verdict: z.string(),
+      decision: z.string(),
       reasons: z.array(z.string()),
     }),
     authPolicy: firebaseAuth((user) => {
