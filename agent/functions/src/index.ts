@@ -9,13 +9,15 @@ import {onFlow} from "@genkit-ai/firebase/functions";
 import {credential} from "firebase-admin";
 import {config} from "dotenv";
 import {getFirestore} from "firebase-admin/firestore";
-import {dotprompt} from "@genkit-ai/dotprompt";
+import {dotprompt, promptRef} from "@genkit-ai/dotprompt";
 import {defineFlow} from "@genkit-ai/flow";
+import {checkDomainWording, checkRecords} from "./tools";
+import {addWebsite} from "./tools/firestore";
 
 // Keys
 const googleAIapiKey = defineSecret("GOOGLE_GENAI_API_KEY");
 const whoisApiKey = defineSecret("WHOIS_API_KEY");
- 
+
 // ----------------------------------------- Initializations
 const debug = true;
 const app = initializeApp({credential: debug ? credential.cert("./phishercatcher-creds.json") : applicationDefault()});
@@ -76,6 +78,25 @@ export const analyzeWebsiteFlow = debug ? defineFlow(
   doAnalyzeWebsiteFlow,
 );
 
-
 async function doAnalyzeWebsiteFlow(input: any): Promise<any> {
+  // Analyse URL/Domain
+  const suspicions = [
+    ...(await checkDomainWording(input.domain)), // analyse wording
+    ...(await checkRecords(debug, input.domain, whoisApiKey)), // analyse records
+  ];
+
+  // analyze website
+  const analyzeWebsitePrompt = promptRef("analyze_website");
+  const result = (await analyzeWebsitePrompt.generate({
+    input: {
+      url: input.url,
+      analysis: suspicions.join("\n"),
+    },
+  })).output();
+
+  // add website to database
+  addWebsite(firestore, input.domain, result);
+
+  // return decision & reasons
+  return result;
 }

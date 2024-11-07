@@ -1,0 +1,26 @@
+---
+model: googleai/gemini-1.5-flash-latest
+config:
+  temperature: 1
+input:
+  schema:
+    url: string
+    analysis: string
+output:
+  format: json
+  schema:
+    percentage: integer, percentage of suspicion of the URL, 0 means legit and 100 means definitely scam
+    verdict: string, final decision on whether the user should continue accessing the URL or avoid it
+    decision?(enum, decision of the analysis about the website based on percentage): [Legit, Suspicious, Malicious]
+    reasons?(array): string, reasons why the URL might be a scam/phishing link. If the URL is legit return null
+
+---
+Analyze the following URL to determine if it is legitimate or likely a scam/phishing attempt. Use the pre-analysis report provided below to make an informed decision.
+
+====== The URL
+{{url}}
+
+====== The Pre-analysis report
+{{analysis}}
+
+Based on these details, analyze any patterns or inconsistencies, consider reputable sources for each attribute, and assess if the domain appears to be trustworthy or if it shows signs of phishing or malicious intent.

@@ -1,0 +1,15 @@
+---
+model: googleai/gemini-1.5-flash-latest
+config:
+  temperature: 1
+input:
+  schema:
+    domain: string
+output:
+  format: json
+  schema:
+    isSuspicious: boolean, true when domain has suspicious words
+    words?(array): string, list of the suspicious words within the domain
+---
+
+Does this domain name "{{domain}}" have any suspicious that suggest urgency, warning or relates to security like: urgent, verify, secure, login, account. 

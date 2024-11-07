@@ -1,0 +1,15 @@
+---
+model: googleai/gemini-1.5-flash-latest
+config:
+  temperature: 1
+input:
+  schema:
+    domain: string
+output:
+  format: json
+  schema:
+    isMisleading: boolean, true when domain is misleading
+    original?: string, the original domain name if the domain is misleading
+---
+
+Is this domain name "{{domain}}" misspelled versions of known websites or a legit one if true then return the original one.
