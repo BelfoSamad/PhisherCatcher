@@ -28,7 +28,6 @@ if (debug) {
   });
 }
 
-
 // ----------------------------------------- Configurations
 if (debug) config();
 configureGenkit({
