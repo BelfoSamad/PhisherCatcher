@@ -1,5 +1,8 @@
 {
   "projects": {
     "default": "phishercatcher-53f64"
-  }
+  },
+  "targets": {},
+  "etags": {},
+  "dataconnectEmulatorConfig": {}
 }

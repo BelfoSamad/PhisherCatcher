@@ -47,7 +47,7 @@ export const analyzeWebsiteFlow = debug ? defineFlow(
   {
     name: "analyzeWebsiteFlow",
     inputSchema: z.object({
-      url: z.string(),
+      domain: z.string(),
     }),
     outputSchema: z.object({
       percentage: z.number(),
@@ -65,7 +65,7 @@ export const analyzeWebsiteFlow = debug ? defineFlow(
       cors: true,
     },
     inputSchema: z.object({
-      url: z.string(),
+      domain: z.string(),
     }),
     outputSchema: z.object({
       percentage: z.number(),
@@ -81,7 +81,7 @@ export const analyzeWebsiteFlow = debug ? defineFlow(
 );
 
 async function doAnalyzeWebsiteFlow(input: any): Promise<any> {
-  // Analyse URL/Domain
+  // Analyse Domain
   const suspicions = [
     ...(await checkDomainWording(input.domain)), // analyse wording
     ...(await checkRecords(debug, input.domain, whoisApiKey)), // analyse records
@@ -91,7 +91,7 @@ async function doAnalyzeWebsiteFlow(input: any): Promise<any> {
   const analyzeWebsitePrompt = promptRef("analyze_website");
   const result = (await analyzeWebsitePrompt.generate({
     input: {
-      url: input.url,
+      url: input.domain,
       analysis: suspicions.join("\n"),
     },
   })).output();

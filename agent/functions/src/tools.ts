@@ -16,7 +16,9 @@ export async function checkDomainWording(domain: string): Promise<string[]> {
     if (misleadingChecker.isMisleading) suspicions.push(`Misleading Domain name: ${misleadingChecker.original}`);
 
     const wordsChecker = (await promptRef("words_checker").generate({input: {domain: domain}})).output();
-    if (wordsChecker.isSuspicious) suspicions.push(`Domain uses suspecious words: ${wordsChecker.original.split(", ")}`);
+    if (wordsChecker.isSuspicious) {
+        suspicions.push(`Domain uses suspecious words: ${wordsChecker.original.split(", ")}`);
+    }
 
     return suspicions;
 }
@@ -33,8 +35,9 @@ export async function checkRecords(debug: boolean, domain: string, whoisApiKey: 
 
     try {
         const tldInfo = checkTLD(domain);
-        if (tldInfo.tldSuspicionSeverity != null)
+        if (tldInfo.tldSuspicionSeverity != null) {
             suspicions.push(`Suspecious TLD of Severity: ${tldInfo.tldSuspicionSeverity}`);
+        }
     } catch (err) {
         console.log("An error caught, ignore!. Error: " + err);
     }
