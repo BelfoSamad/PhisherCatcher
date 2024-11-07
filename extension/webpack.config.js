@@ -21,6 +21,7 @@ module.exports = {
     new CopyWebpackPlugin({
       patterns: [
         {from: './src/manifest.json'},
+        {from: './src/websites.json'},
         {from: './src/content/', to: './content/'},
         {from: './src/sidepanel/prod/browser/'},
       ],

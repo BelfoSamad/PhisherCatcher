@@ -67,21 +67,26 @@ function preCheck(url, domain) {
 function checkUrl(domain) {
   return new Promise((resolve) => {
     chrome.storage.local.get(["enableAutoScan", "enableAutoBlock", "enableForceBlock"], async (res) => {
+      let analysis = undefined;
       if (res['enableAutoScan'] ?? defaults.enableAutoScan) {
         // start animation
         chrome.tabs.sendMessage(activeTabId, {action: "start_animation"});
         chrome.runtime.sendMessage({target: "sidepanel", action: "start_animation"});
 
-        // do analysis?
-        // TODO: check if domain is well known
-        // check in db/agent
-        //const analysis = await chrome.runtime.sendMessage({target: "offscreen", action: "check", domain: domain});
-        const analysis = {
-          id: domain,
-          percentage: Math.floor(Math.random() * 100),
-          verdict: "This is a verdict for the website, either do or not",
-          reasons: ["This is reason 1", "This is reason 2", "This is reason 3"],
-          decision: ["Malicious"][Math.floor(Math.random() * 2)]
+        // check if domain is well known
+        const response = await fetch(chrome.runtime.getURL('websites.json'));
+        const data = await response.json();
+        if (data.websites.includes(domain)) {
+          analysis = {
+            id: domain,
+            percentage: 0,
+            verdict: "This is a well known website. Feel save to use it",
+            reasons: null,
+            decision: "Legit"
+          }
+        } else {
+          // check in db/agent
+          analysis = await chrome.runtime.sendMessage({target: "offscreen", action: "check", domain: domain});
         }
 
         // make action if allowed before returning analysis
@@ -92,7 +97,8 @@ function checkUrl(domain) {
               && (res['enableForceBlock'] ?? defaults.enableForceBlock))))
           chrome.tabs.sendMessage(activeTabId, {action: "block_tab"});
         resolve(analysis);
-      } else resolve(undefined);
+
+      } else resolve(analysis);
     });
   });
 }
