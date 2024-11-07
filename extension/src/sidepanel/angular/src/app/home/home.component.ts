@@ -40,7 +40,7 @@ export class HomeComponent implements OnInit {
   ngOnInit(): void {
     //TODO: get url from background!
     chrome.runtime.onMessage.addListener((message) => {
-      if(message.target == "sidepanel") switch(message.action) {
+      if (message.target == "sidepanel") switch (message.action) {
         case "analysis":
           /* TODO: analysis can be null, undefined, object
             - if undefined, add a message "checking tab, if takes too long refresh page"
@@ -49,6 +49,10 @@ export class HomeComponent implements OnInit {
             - if analysis then show analysis
           */
           this.analysis = message.analysis;
+          this.isAnalyzing = false;
+          break;
+        case "start_animation":
+          this.isAnalyzing = true;
           break;
       }
     });
