@@ -23,7 +23,7 @@ function handleChromeMessages(message, _sender, sendResponse) {
                 await setDoc(doc(db, "users", userCreds.user.uid), defaults);
                 sendResponse({done: true});
             })();
-            break;
+            return true;
         case "login":
             (async () => {
                 let userCreds = await signInWithEmailAndPassword(auth, message.email, message.password);
@@ -31,7 +31,7 @@ function handleChromeMessages(message, _sender, sendResponse) {
                     sendResponse({done: true, settings: querySnapshot.exists() ? querySnapshot.data() : defaults});
                 });
             })();
-            break;
+            return true;
         case "isLoggedIn":
             sendResponse({isLoggedIn: auth.currentUser != null});
             break;
@@ -39,7 +39,6 @@ function handleChromeMessages(message, _sender, sendResponse) {
             (async () => {
                 await setDoc(doc(db, "users", auth.currentUser.uid), message.settings);
             })();
-            break;
         case "logout":
             auth.signOut();
             break;
@@ -59,8 +58,7 @@ function handleChromeMessages(message, _sender, sendResponse) {
                     sendResponse(analysis);
                 }
             });
-            break;
+            return true;
     }
 
-    return true;
 }

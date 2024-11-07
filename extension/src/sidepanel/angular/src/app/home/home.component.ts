@@ -1,5 +1,5 @@
 ///<reference types="chrome"/>
-import {Component, inject, OnInit} from '@angular/core';
+import {Component, inject, NgZone, OnInit} from '@angular/core';
 import {Router} from '@angular/router';
 import {CheckerService} from '../services/checker.service';
 import {AuthService} from '../services/auth.service';
@@ -35,26 +35,28 @@ export class HomeComponent implements OnInit {
   currentIndex = -1;
 
   //Constructor
-  constructor(private router: Router, private checkerService: CheckerService, private authService: AuthService) { }
+  constructor(private router: Router, private zone: NgZone, private checkerService: CheckerService, private authService: AuthService) { }
 
   ngOnInit(): void {
     //TODO: get url from background!
     chrome.runtime.onMessage.addListener((message) => {
-      if (message.target == "sidepanel") switch (message.action) {
-        case "analysis":
-          /* TODO: analysis can be null, undefined, object
-            - if undefined, add a message "checking tab, if takes too long refresh page"
-            - if undefined w/ allowCheck=true, show button to execute check manually
-            - if null, tab is either new tab or chrome related tab
-            - if analysis then show analysis
-          */
-          this.analysis = message.analysis;
-          this.isAnalyzing = false;
-          break;
-        case "start_animation":
-          this.isAnalyzing = true;
-          break;
-      }
+      this.zone.run(() => {
+        if (message.target == "sidepanel") switch (message.action) {
+          case "analysis":
+            /* TODO: analysis can be null, undefined, object
+              - if undefined, add a message "checking tab, if takes too long refresh page"
+              - if undefined w/ allowCheck=true, show button to execute check manually
+              - if null, tab is either new tab or chrome related tab
+              - if analysis then show analysis
+            */
+            this.analysis = message.analysis;
+            this.isAnalyzing = false;
+            break;
+          case "start_animation":
+            this.isAnalyzing = true;
+            break;
+        }
+      });
     });
   }
 

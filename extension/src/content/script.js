@@ -6,7 +6,7 @@ function createOverlay() {
 }
 
 // Listen for messages from the background script
-chrome.tabs.onMessage.addListener((message, _sender, _sendResponse) => {
+chrome.runtime.onMessage.addListener((message, _sender, _sendResponse) => {
     switch (message.action) {
         case "start_animation": {
             createOverlay();

@@ -20,12 +20,14 @@ chrome.tabs.onUpdated.addListener(async (tabId, changeInfo, tab) => {
     const domain = new URL(tab.url).hostname.split(":")[0].toLowerCase();
     // check if check is required
     if (preCheck(tab.url, domain)) {
-      // make the check
-      const analysis = await checkUrl(tab.url);
-      tabs.set(activeTabId, analysis);
-      // send analysis to sidepanel
-      chrome.tabs.sendMessage({action: "stop_animation"});
-      chrome.runtime.sendMessage({target: "sidepanel", action: "analysis", analysis: tabs[activeTabId], allowCheck: analysis == undefined});
+      checkUrl(tab.url).then(analysis => {
+        setTimeout(() => { //TODO: to remove, just use for testing animation
+          tabs[activeTabId] = analysis;
+          // stop page animation & send analysis to sidepanel
+          chrome.tabs.sendMessage(activeTabId, {action: "stop_animation"});
+          chrome.runtime.sendMessage({target: "sidepanel", action: "analysis", analysis: tabs[activeTabId], allowCheck: analysis == undefined});
+        }, 5000);
+      });
     }
   }
 });
@@ -34,8 +36,6 @@ chrome.tabs.onRemoved.addListener((tabId, _removeInfo) => {
 });
 chrome.tabs.onActivated.addListener((activeInfo) => {
   activeTabId = activeInfo.tabId;// update activeTabId
-  // the tab is newly created
-  if (!tabs.has(activeTabId)) tabs.set(activeTabId, undefined);
   // send details to sidepanel
   chrome.runtime.sendMessage({target: "sidepanel", action: "analysis", analysis: tabs[activeTabId], allowCheck: false});
 });
@@ -44,18 +44,18 @@ chrome.tabs.onActivated.addListener((activeInfo) => {
 function preCheck(url, domain) {
   // check if new tab or chrome related tab
   if (url.startsWith("chrome://") || domain === "newtab") {
-    tabs.set(activeTabId, null);
+    tabs[activeTabId] = null;
     chrome.runtime.sendMessage({target: "sidepanel", action: "analysis", analysis: tabs[activeTabId]});
     return false;
   }
 
   // reload check, do nothing
-  if (tabs[activeTabId].id == domain) return false;
+  if (tabs[activeTabId] != null && tabs[activeTabId].id == domain) return false;
 
   // check if domain already exists
   for (const value of tabs.values()) {
-    if (value.id === domain) {
-      tabs.set(activeTabId, value);
+    if ((value != null) && value.id === domain) {
+      tabs[activeTabId] = value;
       chrome.runtime.sendMessage({target: "sidepanel", action: "analysis", analysis: tabs[activeTabId]});
       return false;
     }
@@ -64,15 +64,28 @@ function preCheck(url, domain) {
   return true;
 }
 
-async function checkUrl(domain) {
-  chrome.storage.local.get(["enableAutoScan"], async (res) => {
-    if (res['enableAutoScan'] ?? defaults.enableAutoScan) {
-      chrome.tabs.sendMessage({action: "start_animation"});
-      // TODO: check if domain is well known
-      // check in db/agent
-      const analysis = await chrome.runtime.sendMessage({target: "offscreen", action: "check", domain: domain});
-      return analysis;
-    } else return undefined;
+function checkUrl(domain) {
+  return new Promise((resolve) => {
+    chrome.storage.local.get(["enableAutoScan"], async (res) => {
+      if (res['enableAutoScan'] ?? defaults.enableAutoScan) {
+        // start animation
+        chrome.tabs.sendMessage(activeTabId, {action: "start_animation"});
+        chrome.runtime.sendMessage({target: "sidepanel", action: "start_animation"});
+
+        // do analysis?
+        // TODO: check if domain is well known
+        // check in db/agent
+        //const analysis = await chrome.runtime.sendMessage({target: "offscreen", action: "check", domain: domain});
+        const analysis = {
+          id: domain,
+          percentage: Math.floor(Math.random() * 100),
+          verdict: "This is a verdict for the website, either do or not",
+          reasons: ["This is reason 1", "This is reason 2", "This is reason 3"],
+          decision: ["Legit", "Suspicious", "Malicious"][Math.floor(Math.random() * 2)]
+        }
+        resolve(analysis);
+      } else resolve(undefined);
+    });
   });
 }
 

@@ -1,0 +1,44 @@
+.phishsercatcher-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 99999;
+    pointer-events: none;
+    overflow: hidden; /* Ensures the pseudo-element stays within the box */
+  }
+
+  .phishsercatcher-overlay::before {
+    content: '';
+    position: absolute;
+    top: 0px;
+    left: 0px;
+    right: 0px;
+    bottom: 0px;
+    background: linear-gradient(var(--a), #ffbe0b, #fb5607, #ff006e, #8338ec, #3a86ff);
+    filter: blur(32px); /* Creates the soft shadow effect */
+    z-index: 99999;
+    mask: 
+       linear-gradient(to top, transparent, black) top / 100% 5%,
+       linear-gradient(to bottom, transparent, black) bottom / 100% 5%,
+       linear-gradient(to left, transparent, black) left / 2% 100%,
+       linear-gradient(to right, transparent, black) right / 2% 100%;
+    mask-repeat: no-repeat;
+    animation: moveGradient 5s infinite alternate;
+  }
+
+  @property --a {
+    syntax: '<angle>';
+    inherits: false;
+    initial-value: 0deg;
+  }
+  
+  @keyframes moveGradient {
+    0% {
+        --a: 0deg;
+    }
+    100% {
+        --a: 360deg;
+    }
+  }
