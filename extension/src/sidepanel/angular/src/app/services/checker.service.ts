@@ -6,8 +6,12 @@ import {Injectable} from '@angular/core';
 })
 export class CheckerService {
 
-  async checkWebsite() {
-    return await chrome.runtime.sendMessage({target: "offscreen", action: "check"});
+  checkWebsite() {
+    chrome.runtime.sendMessage({target: "background", action: "check"});
+  }
+
+  blockUnblockWebsite() {
+    chrome.runtime.sendMessage({target: "background", action: "block"});
   }
 
 }

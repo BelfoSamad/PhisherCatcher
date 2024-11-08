@@ -11,7 +11,25 @@ const tabs = new Map();
 setupOffscreenDocument("./offscreen/offscreen.html");
 chrome.sidePanel.setPanelBehavior({openPanelOnActionClick: true}).catch((error) => console.error(error));
 chrome.runtime.onMessage.addListener((message) => {
-  if (message.target == "background" && message.action == "userIn") userLoggedIn = message.isLoggedIn;
+  if (message.target == "background") {
+    switch (message.action) {
+      case "userIn":
+        userLoggedIn = message.isLoggedIn;
+        break;
+      case "check":
+        // get active tab
+        chrome.tabs.query({active: true, currentWindow: true}, (tabs) => {
+          const activeTab = tabs[0];
+          // extract domain
+          const domain = new URL(activeTab.url).hostname.split(":")[0].toLowerCase();
+          // verify if check is needed, then do check
+          if (preCheck(activeTab.url, domain)) doCheck(domain);
+        });
+      case "block":
+        blockTab(activeTabId);
+        break;
+    }
+  }
 });
 
 //------------------------------- Tab Handling

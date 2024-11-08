@@ -12,21 +12,25 @@
         </div>
     </mat-toolbar>
     <div class="content">
-        <p class="domain mat-title-large">{{url}}</p>
         @if(analysis == undefined) {
-        @if (!isAnalyzing) {
+        @if (isAnalyzing) {
+        <div class="animated-gradient"></div>
+        }@else {
+        @if(manualCheckAllowed) {
+        <p class="domain mat-title-large">Auto check is disabled, Click Analyze to check URL!</p>
         <button class="analyze" mat-flat-button (click)="analyzeWebsite()">
             <span class="mat-label-large">Analyze</span>
         </button>
         }@else {
-        <div class="animated-gradient"></div>
+        <p class="domain mat-title-large">Checking URL, if it takes too long please refresh the page!</p>
+        }
         }
         } @else if (analysis == null) {
-        /////////////////////////////////////// TODO: Error Happened
+        <p class="domain mat-title-large">The tab is either a New Tab or a Chrome tab (settings, extensions...etc.)</p>
         } @else {
         <div class="verdict-box" [ngClass]="analysis.decision.toString().toLowerCase()">
             <span>{{ analysis.verdict }}, </span>
-            <button (click)="handleBlock()">Block/Unblock</button>
+            <button *ngIf="analysis.decision != 'Legit'" (click)="handleBlock()">Block/Unblock</button>
         </div>
         @if(currentIndex == -1) {
         <div class="percentage-container">

@@ -29,27 +29,26 @@ export class HomeComponent implements OnInit {
   private _snackBar = inject(MatSnackBar);
 
   //Data
-  url: string | undefined;
+  settings: any | undefined;
   analysis: any | undefined | null;
   isAnalyzing: boolean = false;
+  manualCheckAllowed: boolean = false;
   currentIndex = -1;
 
   //Constructor
   constructor(private router: Router, private zone: NgZone, private checkerService: CheckerService, private authService: AuthService) { }
 
-  ngOnInit(): void {
-    //TODO: get url from background!
+  async ngOnInit(): Promise<void> {
+    // get settings
+    this.settings = await chrome.storage.local.get(["enableAutoBlock", "enableUnblocking", "enableForceBlock"]);
+
+    // listen to messages
     chrome.runtime.onMessage.addListener((message) => {
       this.zone.run(() => {
         if (message.target == "sidepanel") switch (message.action) {
           case "analysis":
-            /* TODO: analysis can be null, undefined, object
-              - if undefined, add a message "checking tab, if takes too long refresh page"
-              - if undefined w/ allowCheck=true, show button to execute check manually
-              - if null, tab is either new tab or chrome related tab
-              - if analysis then show analysis
-            */
             this.analysis = message.analysis;
+            this.manualCheckAllowed = message.allowCheck;
             this.isAnalyzing = false;
             break;
           case "start_animation":
@@ -61,8 +60,7 @@ export class HomeComponent implements OnInit {
   }
 
   analyzeWebsite() {
-    this.isAnalyzing = true;
-    //TODO: Analyze when clicked!
+    this.checkerService.checkWebsite();
   }
 
   getIntValue(percentage: string) {
@@ -78,7 +76,7 @@ export class HomeComponent implements OnInit {
   }
 
   handleBlock() {
-    //TODO: Handle Blocking Website
+    this.checkerService.blockUnblockWebsite();
   }
 
   async logout(): Promise<void> {
