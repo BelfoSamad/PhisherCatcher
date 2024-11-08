@@ -1,4 +1,5 @@
 import {defaults} from "./configs";
+import {startAnimations, checkUrl, sendAnalysis, stopAnimations, blockTab} from "./utilities";
 
 //------------------------------- Declarations
 let creating; // A global promise to avoid concurrency issues
@@ -18,17 +19,8 @@ chrome.tabs.onUpdated.addListener(async (tabId, changeInfo, tab) => {
   if (tabId == activeTabId & changeInfo.status == "complete") {
     // extract domain
     const domain = new URL(tab.url).hostname.split(":")[0].toLowerCase();
-    // check if check is required
-    if (preCheck(tab.url, domain)) {
-      checkUrl(tab.url).then(analysis => {
-        setTimeout(() => { //TODO: to remove, just use for testing animation
-          tabs[activeTabId] = analysis;
-          // stop page animation & send analysis to sidepanel
-          chrome.tabs.sendMessage(activeTabId, {action: "stop_animation"});
-          chrome.runtime.sendMessage({target: "sidepanel", action: "analysis", analysis: tabs[activeTabId], allowCheck: analysis == undefined});
-        }, 5000);
-      });
-    }
+    // verify if check is needed, then do check
+    if (preCheck(tab.url, domain)) doCheck(domain);
   }
 });
 chrome.tabs.onRemoved.addListener((tabId, _removeInfo) => {
@@ -36,27 +28,27 @@ chrome.tabs.onRemoved.addListener((tabId, _removeInfo) => {
 });
 chrome.tabs.onActivated.addListener((activeInfo) => {
   activeTabId = activeInfo.tabId;// update activeTabId
-  // send details to sidepanel
-  chrome.runtime.sendMessage({target: "sidepanel", action: "analysis", analysis: tabs[activeTabId], allowCheck: false});
+  // send analysis to sidepanel
+  sendAnalysis(tabs[activeTabId], false);
 });
 
 //------------------------------- Check URL
 function preCheck(url, domain) {
   // check if new tab or chrome related tab
   if (url.startsWith("chrome://") || domain === "newtab") {
-    tabs[activeTabId] = null;
-    chrome.runtime.sendMessage({target: "sidepanel", action: "analysis", analysis: tabs[activeTabId]});
+    tabs[activeTabId] = null; // set locally
+    sendAnalysis(null, false); // send to sidepanel
     return false;
   }
 
-  // reload check, do nothing
+  // page reload or navigate through same website, do nothing
   if (tabs[activeTabId] != null && tabs[activeTabId].id == domain) return false;
 
-  // check if domain already exists
+  // check if domain already exists (checked in another tab)
   for (const value of tabs.values()) {
     if ((value != null) && value.id === domain) {
       tabs[activeTabId] = value;
-      chrome.runtime.sendMessage({target: "sidepanel", action: "analysis", analysis: tabs[activeTabId]});
+      sendAnalysis(value, false);
       return false;
     }
   }
@@ -64,43 +56,25 @@ function preCheck(url, domain) {
   return true;
 }
 
-function checkUrl(domain) {
-  return new Promise((resolve) => {
-    chrome.storage.local.get(["enableAutoScan", "enableAutoBlock", "enableForceBlock"], async (res) => {
-      let analysis = undefined;
-      if (res['enableAutoScan'] ?? defaults.enableAutoScan) {
-        // start animation
-        chrome.tabs.sendMessage(activeTabId, {action: "start_animation"});
-        chrome.runtime.sendMessage({target: "sidepanel", action: "start_animation"});
+async function doCheck(domain) {
+  // check only if user is logged-in
+  if (userLoggedIn) {
+    // get settings
+    const settings = await chrome.storage.local.get(["enableAutoScan", "enableAutoBlock", "enableForceBlock"]);
+    // start check (and animations)
+    startAnimations(activeTabId);
+    const analysis = await checkUrl(domain, settings['enableAutoScan'] ?? defaults.enableAutoScan);
+    // set analysis
+    tabs[activeTabId] = analysis; // set locally
+    sendAnalysis(analysis, analysis == undefined); // send to sidepanel
+    // stop animations
+    stopAnimations(activeTabId);
 
-        // check if domain is well known
-        const response = await fetch(chrome.runtime.getURL('websites.json'));
-        const data = await response.json();
-        if (data.websites.includes(domain)) {
-          analysis = {
-            id: domain,
-            percentage: 0,
-            verdict: "This is a well known website. Feel save to use it",
-            reasons: null,
-            decision: "Legit"
-          }
-        } else {
-          // check in db/agent
-          analysis = await chrome.runtime.sendMessage({target: "offscreen", action: "check", domain: domain});
-        }
-
-        // make action if allowed before returning analysis
-        // TODO: Clean this
-        if ((res['enableAutoBlock'] ?? defaults.enableAutoBlock)
-          && (analysis.decision == "Malicious"
-            || (analysis.decision == "Suspicious"
-              && (res['enableForceBlock'] ?? defaults.enableForceBlock))))
-          chrome.tabs.sendMessage(activeTabId, {action: "block_tab"});
-        resolve(analysis);
-
-      } else resolve(analysis);
-    });
-  });
+    // block website
+    if (settings['enableAutoBlock'] ?? defaults.enableAutoBlock) // Auto block allowed
+      if (analysis.decision == "Malicious" || (analysis.decision == "Suspicious" && (settings['enableForceBlock'] ?? defaults.enableForceBlock)))
+        blockTab(activeTabId); //URL is either Malicious (direct block) or Suspicious while Force Block is enabled
+  }
 }
 
 //------------------------------- Handle Offscreen Documents

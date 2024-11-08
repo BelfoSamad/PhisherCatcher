@@ -10,6 +10,7 @@ module.exports = {
     config: './src/configs.js',
     offscreen: './src/offscreen/offscreen.js',
     background: './src/background.js',
+    utilities: './src/utilities.js'
   },
   plugins: [
     new CleanWebpackPlugin({cleanStaleWebpackAssets: false}),
