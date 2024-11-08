@@ -22,11 +22,9 @@ chrome.runtime.onMessage.addListener((message, _sender, _sendResponse) => {
             if (overlaysByClass.length > 0) document.body.removeChild(overlaysByClass[0]);
             break;
         case "block_tab":
-            blockTab();
-            break;
-        case "unblock_tab":
             const blocksByClass = document.getElementsByClassName("phishsercatcher-block");
             if (blocksByClass.length > 0) document.body.removeChild(blocksByClass[0]);
+            else blockTab();
             break;
     }
 });
