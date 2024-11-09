@@ -8,6 +8,21 @@ function createOverlay() {
 function blockTab() {
     const block = document.createElement("div");
     block.className = "phishsercatcher-block";
+
+    const messageContainer = document.createElement("div");
+    messageContainer.className = "phishercatcher-block-message";
+
+    // create the image element
+    const image = document.createElement("img");
+    image.src = "your-image-url.png";
+
+    // Create the text element
+    const messageText = document.createElement("p");
+    messageText.textContent = "This website has been blocked for your safety.";
+
+    messageContainer.append(image);
+    messageContainer.append(messageText);
+    block.append(messageContainer);
     document.body.appendChild(block);
 }
 
