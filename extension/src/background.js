@@ -15,11 +15,11 @@ chrome.runtime.onMessage.addListener((message) => {
     switch (message.action) {
       case "userIn":
         userLoggedIn = message.isLoggedIn;
-        break;
+        return true;
       case "check":
         // get active tab
-        chrome.tabs.query({active: true, currentWindow: true}, (tabs) => {
-          const activeTab = tabs[0];
+        chrome.tabs.query({active: true, currentWindow: true}, (activeTabs) => {
+          const activeTab = activeTabs[0];
           // extract domain
           const domain = new URL(activeTab.url).hostname.split(":")[0].toLowerCase();
           // verify if check is needed, then do check
@@ -37,6 +37,7 @@ chrome.tabs.onUpdated.addListener(async (tabId, changeInfo, tab) => {
   if (tabId == activeTabId & changeInfo.status == "complete") {
     // extract domain
     const domain = new URL(tab.url).hostname.split(":")[0].toLowerCase();
+    console.log("Domain Caught: " + domain);
     // verify if check is needed, then do check
     if (preCheck(tab.url, domain)) doCheck(domain);
   }
@@ -47,25 +48,25 @@ chrome.tabs.onRemoved.addListener((tabId, _removeInfo) => {
 chrome.tabs.onActivated.addListener((activeInfo) => {
   activeTabId = activeInfo.tabId;// update activeTabId
   // send analysis to sidepanel
-  sendAnalysis(tabs[activeTabId], false);
+  sendAnalysis(tabs.get(activeTabId), false);
 });
 
 //------------------------------- Check URL
 function preCheck(url, domain) {
   // check if new tab or chrome related tab
   if (url.startsWith("chrome://") || domain === "newtab") {
-    tabs[activeTabId] = null; // set locally
+    tabs.set(activeTabId, null); // set locally
     sendAnalysis(null, false); // send to sidepanel
     return false;
   }
 
   // page reload or navigate through same website, do nothing
-  if (tabs[activeTabId] != null && tabs[activeTabId].id == domain) return false;
+  if (tabs.get(activeTabId)?.id == domain) return false;
 
   // check if domain already exists (checked in another tab)
   for (const value of tabs.values()) {
-    if ((value != null) && value.id === domain) {
-      tabs[activeTabId] = value;
+    if (value?.id === domain) {
+      tabs.set(activeTabId, value);
       sendAnalysis(value, false);
       return false;
     }
@@ -83,7 +84,7 @@ async function doCheck(domain) {
     startAnimations(activeTabId);
     const analysis = await checkUrl(domain, settings['enableAutoScan'] ?? defaults.enableAutoScan);
     // set analysis
-    tabs[activeTabId] = analysis; // set locally
+    tabs.set(activeTabId, analysis); // set locally
     sendAnalysis(analysis, analysis == undefined); // send to sidepanel
     // stop animations
     stopAnimations(activeTabId);

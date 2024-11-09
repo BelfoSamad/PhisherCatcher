@@ -27,7 +27,7 @@
             "inlineStyleLanguage": "scss",
             "assets": [],
             "styles": [
-              "src/assets/root.css",
+              "src/styles/root.css",
               "src/styles.scss"
             ],
             "scripts": []
@@ -87,7 +87,6 @@
               }
             ],
             "styles": [
-              "@angular/material/prebuilt-themes/azure-blue.css",
               "src/styles.scss"
             ],
             "scripts": []

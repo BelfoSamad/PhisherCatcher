@@ -47,7 +47,7 @@ function handleChromeMessages(message, _sender, sendResponse) {
             getDoc(doc(db, "websites", message.domain)).then(async querySnapshot => {
                 if (!querySnapshot.exists()) {
                     const analyzeWebsite = httpsCallable(functions, 'analyzeWebsiteFlow');
-                    analyzeWebsite({url: message.url}).then(res => {
+                    analyzeWebsite({domain: message.domain}).then(res => {
                         const analysis = res.data;
                         analysis["id"] = message.domain;
                         sendResponse(analysis);

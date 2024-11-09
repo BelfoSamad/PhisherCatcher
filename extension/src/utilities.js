@@ -36,7 +36,3 @@ export function sendAnalysis(analysis, allowCheck) {
 export function blockTab(tabId) {
     chrome.tabs.sendMessage(tabId, {action: "block_tab"});
 }
-
-export function unblockTab(tabId) {
-    chrome.tabs.sendMessage(tabId, {action: "unblock_tab"});
-}

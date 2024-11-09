@@ -4,7 +4,7 @@
 @include cdk.overlay();
 
 // Define the theme object.
-$phishserCatcher-theme: mat.define-theme((color: (theme-type: dark, use-system-variables: true, ), density: (scale: 0, )));
+$phishserCatcher-theme: mat.define-theme((color: (theme-type: dark, use-system-variables: true), density: (scale: 0)));
 
 // Include theme styles.
 :root {
