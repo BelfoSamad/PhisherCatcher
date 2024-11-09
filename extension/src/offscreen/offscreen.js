@@ -39,6 +39,7 @@ function handleChromeMessages(message, _sender, sendResponse) {
             (async () => {
                 await setDoc(doc(db, "users", auth.currentUser.uid), message.settings);
             })();
+            break;
         case "logout":
             auth.signOut();
             break;
