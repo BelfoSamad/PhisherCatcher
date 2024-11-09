@@ -47,6 +47,7 @@ export class HomeComponent implements OnInit {
       this.zone.run(() => {
         if (message.target == "sidepanel") switch (message.action) {
           case "analysis":
+            console.log(message.analysis);
             this.analysis = message.analysis;
             this.manualCheckAllowed = message.allowCheck;
             this.isAnalyzing = false;

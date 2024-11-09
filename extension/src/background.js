@@ -25,6 +25,7 @@ chrome.runtime.onMessage.addListener((message) => {
           // verify if check is needed, then do check
           if (preCheck(activeTab.url, domain)) doCheck(domain);
         });
+        break;
       case "block":
         blockTab(activeTabId);
         break;

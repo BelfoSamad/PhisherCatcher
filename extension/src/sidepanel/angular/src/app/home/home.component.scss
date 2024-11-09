@@ -27,12 +27,15 @@ mat-toolbar {
 }
 
 .content {
-    display: flex;
+    display: grid;
     flex: 1;
-    justify-content: center;
-    flex-direction: column;
-    align-items: center;
+    align-items: flex-start;
     text-align: center;
+}
+
+.analyze-message {
+    justify-self: center;
+    align-self: center;
 }
 
 .analyze {
@@ -49,36 +52,43 @@ mat-toolbar {
     font-weight: 700;
 }
 
-.domain {
+.message {
     font-family: "Poppins", sans-serif;
     width: 100%;
     font-weight: 700;
-    font-size: 14px;
-    margin: 0 16px 16px 16px;
+    font-size: 18px;
+    //margin: 0 16px 16px 16px;
     white-space: normal;
-    word-wrap: break-word;
+    justify-self: center;
+    align-self: center;
     overflow-wrap: break-word;
+}
+
+.loading-message {
+    opacity: var(--opacity);
+    animation: loadingText 0.5s infinite alternate;
 }
 
 .animated-gradient {
     width: 90%;
     height: 256px;
     border-radius: 16px;
-    background: linear-gradient(var(--a), #ffbe0b, #fb5607, #ff006e, #8338ec, #3a86ff);
+    background: linear-gradient(var(--angle), #ffbe0b, #fb5607, #ff006e, #8338ec, #3a86ff);
     background-size: 200% 200%;
+    align-self: center;
+    justify-self: center;
     animation: moveGradient 5s infinite alternate;
 }
 
 .verdict-box {
     display: flex;
-    align-items: center;
-    justify-content: space-between;
+    justify-self: flex-start;
     font-family: "Poppins", sans-serif;
     padding: 16px;
-    margin-top: 8px;
     border-radius: 4px;
     color: white;
     font-size: 14px;
+    margin-top: 16px;
 }
 
 .legit {
@@ -110,7 +120,21 @@ button {
     display: inline-block;
     width: 256px;
     height: 256px;
-    margin-top: 16px;
+    justify-self: center;
+}
+
+.percentage-background {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+}
+
+.background-circle {
+    fill: none;
+    stroke: var(--sys-surface-variant);
+    stroke-width: 8;
 }
 
 .percentage-label {
@@ -124,15 +148,14 @@ button {
 }
 
 .reason-card {
-    width: 90%;
     height: 256px;
-    margin-top: 16px;
     background-color: transparent;
 }
 
 .reason {
     font-family: "Poppins", sans-serif;
     font-weight: 500;
+    font-size: 16px;
     overflow-y: auto;
     margin: auto;
     padding: 0 16px;
@@ -140,9 +163,8 @@ button {
 
 .scroll-container {
     display: flex;
-    justify-content: space-between;
+    justify-self: center;
     align-items: center;
-    margin-top: 16px;
 }
 
 .indicators {
@@ -164,18 +186,34 @@ button {
     gap: 10px;
 }
 
-@property --a {
+@property --angle {
     syntax: '<angle>';
     inherits: false;
     initial-value: 0deg;
 }
 
+@property --opacity {
+    syntax: '<number>';
+    inherits: false;
+    initial-value: 1;
+}
+
 @keyframes moveGradient {
     0% {
-        --a: 0deg;
+        --angle: 0deg;
     }
 
     100% {
-        --a: 360deg;
+        --angle: 360deg;
+    }
+}
+
+@keyframes loadingText {
+    0% {
+        --opacity: 1
+    }
+
+    100% {
+        --opacity: 0.5
     }
 }
