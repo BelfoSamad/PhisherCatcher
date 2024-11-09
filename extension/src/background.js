@@ -1,5 +1,5 @@
 import {defaults} from "./configs";
-import {startAnimations, checkUrl, sendAnalysis, stopAnimations, blockTab} from "./utilities";
+import {startAnimations, checkUrl, sendAnalysis, stopAnimations, blockTab, sendError} from "./utilities";
 
 //------------------------------- Declarations
 let creating; // A global promise to avoid concurrency issues
@@ -83,17 +83,21 @@ async function doCheck(domain) {
     const settings = await chrome.storage.local.get(["enableAutoCheck", "enableAutoBlock", "enableForceBlock"]);
     // start check (and animations)
     startAnimations(activeTabId);
-    const analysis = await checkUrl(domain, settings['enableAutoCheck'] ?? defaults.enableAutoCheck);
-    // set analysis
-    tabs.set(activeTabId, analysis); // set locally
-    sendAnalysis(analysis, analysis == undefined); // send to sidepanel
+    const result = await checkUrl(domain, settings['enableAutoCheck'] ?? defaults.enableAutoCheck);
+    if (result.error != null) sendError(result.error)
+    else {
+      // set analysis
+      tabs.set(activeTabId, result.analysis); // set locally
+      sendAnalysis(result.analysis, result.analysis == undefined); // send to sidepanel
+
+      // block website
+      if (settings['enableAutoBlock'] ?? defaults.enableAutoBlock) // Auto block allowed
+        if (result.analysis.decision == "Malicious" || (result.analysis.decision == "Suspicious" && (settings['enableForceBlock'] ?? defaults.enableForceBlock)))
+          blockTab(activeTabId); //URL is either Malicious (direct block) or Suspicious while Force Block is enabled
+    }
+
     // stop animations
     stopAnimations(activeTabId);
-
-    // block website
-    if (settings['enableAutoBlock'] ?? defaults.enableAutoBlock) // Auto block allowed
-      if (analysis.decision == "Malicious" || (analysis.decision == "Suspicious" && (settings['enableForceBlock'] ?? defaults.enableForceBlock)))
-        blockTab(activeTabId); //URL is either Malicious (direct block) or Suspicious while Force Block is enabled
   }
 }
 

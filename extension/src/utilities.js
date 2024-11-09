@@ -33,6 +33,10 @@ export function sendAnalysis(analysis, allowCheck) {
     chrome.runtime.sendMessage({target: "sidepanel", action: "analysis", analysis: analysis, allowCheck: allowCheck});
 }
 
+export function sendError(error) {
+    chrome.runtime.sendMessage({target: "sidepanel", action: "error", error: error});
+}
+
 export function blockTab(tabId) {
     chrome.tabs.sendMessage(tabId, {action: "block_tab"});
 }

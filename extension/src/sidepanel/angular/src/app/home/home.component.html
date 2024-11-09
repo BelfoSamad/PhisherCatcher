@@ -12,7 +12,10 @@
         </div>
     </mat-toolbar>
     <div class="content">
-        @if(analysis === undefined) {
+        @if(checkError) {
+            <p class="message loading-message">An error happened while checking</p>
+        }
+        @else if(analysis === undefined) {
             @if (isAnalyzing) {
                 <div class="animated-gradient"></div>
             }@else {

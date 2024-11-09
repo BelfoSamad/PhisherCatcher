@@ -19,17 +19,25 @@ function handleChromeMessages(message, _sender, sendResponse) {
         //--------------------------- Authentication
         case "register":
             (async () => {
-                let userCreds = await createUserWithEmailAndPassword(auth, message.email, message.password);
-                await setDoc(doc(db, "users", userCreds.user.uid), defaults);
-                sendResponse({done: true});
+                try {
+                    let userCreds = await createUserWithEmailAndPassword(auth, message.email, message.password);
+                    await setDoc(doc(db, "users", userCreds.user.uid), defaults);
+                    sendResponse({done: true});
+                } catch (e) {
+                    sendResponse({done: false, error: e.message});
+                }
             })();
             return true;
         case "login":
             (async () => {
-                let userCreds = await signInWithEmailAndPassword(auth, message.email, message.password);
-                getDoc(doc(db, "users", userCreds.user.uid)).then(async querySnapshot => {
-                    sendResponse({done: true, settings: querySnapshot.exists() ? querySnapshot.data() : defaults});
-                });
+                try {
+                    let userCreds = await signInWithEmailAndPassword(auth, message.email, message.password);
+                    getDoc(doc(db, "users", userCreds.user.uid)).then(async querySnapshot => {
+                        sendResponse({done: true, settings: querySnapshot.exists() ? querySnapshot.data() : defaults});
+                    });
+                } catch (e) {
+                    sendResponse({done: false, error: e.message});
+                }
             })();
             return true;
         case "isLoggedIn":
@@ -37,7 +45,9 @@ function handleChromeMessages(message, _sender, sendResponse) {
             break;
         case "syncSettings":
             (async () => {
-                await setDoc(doc(db, "users", auth.currentUser.uid), message.settings);
+                try {
+                    await setDoc(doc(db, "users", auth.currentUser.uid), message.settings);
+                } catch (e) {/* Ignore */}
             })();
             break;
         case "logout":
@@ -45,20 +55,25 @@ function handleChromeMessages(message, _sender, sendResponse) {
             break;
         //--------------------------- Check
         case "check":
-            getDoc(doc(db, "websites", message.domain)).then(async querySnapshot => {
-                if (!querySnapshot.exists()) {
-                    const analyzeWebsite = httpsCallable(functions, 'analyzeWebsiteFlow');
-                    analyzeWebsite({domain: message.domain}).then(res => {
-                        const analysis = res.data;
+            try {
+                getDoc(doc(db, "websites", message.domain)).then(async querySnapshot => {
+                    if (!querySnapshot.exists()) {
+                        const analyzeWebsite = httpsCallable(functions, 'analyzeWebsiteFlow');
+                        analyzeWebsite({domain: message.domain}).then(res => {
+                            const analysis = res.data;
+                            analysis["id"] = message.domain;
+                            sendResponse({error: null, analysis: analysis});
+                        });
+                    } else {
+                        const analysis = querySnapshot.data();
                         analysis["id"] = message.domain;
-                        sendResponse(analysis);
-                    });
-                } else {
-                    const analysis = querySnapshot.data();
-                    analysis["id"] = message.domain;
-                    sendResponse(analysis);
-                }
-            });
+                        sendResponse({error: null, analysis: analysis});
+                    }
+                });
+            } catch (e) {
+                console.log(e.message);
+                sendResponse({error: e.message, analysis: null});
+            }
             return true;
     }
 

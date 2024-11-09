@@ -47,12 +47,10 @@ export class RegisterComponent implements OnInit {
       this.authService.register(
         this.registerForm!!.value.email,
         this.registerForm!!.value.password
-      ).then(res => {
+      ).then((response: any) => {
         this.registerLoading = false
-        if (res) this.router.navigate(['']) //go home
-      }).catch(err => {
-        this.registerLoading = false
-        this._snackBar.open(err.message)
+        if (response.done) this.router.navigate(['']) //go home
+        else this._snackBar.open(response.error);
       });
     } else {
       this.registerForm!!.markAllAsTouched();

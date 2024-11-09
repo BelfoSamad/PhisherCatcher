@@ -30,6 +30,7 @@ export class HomeComponent implements OnInit {
 
   //Data
   analysis: any | undefined | null;
+  checkError = false;
   isAnalyzing: boolean = false;
   manualCheckAllowed: boolean = false;
   currentIndex = -1;
@@ -43,10 +44,18 @@ export class HomeComponent implements OnInit {
       this.zone.run(() => {
         if (message.target == "sidepanel") switch (message.action) {
           case "analysis":
-            console.log(message.analysis);
             this.analysis = message.analysis;
             this.manualCheckAllowed = message.allowCheck;
             this.isAnalyzing = false;
+            this.checkError = false;
+            break;
+          case "error":
+            if (message.error == "ERROR::AUTH") this.logout();
+            else {
+              this.analysis = undefined;
+              this.checkError = true;
+              this._snackBar.open(message.error);
+            }
             break;
           case "start_animation":
             this.isAnalyzing = true;
@@ -76,7 +85,7 @@ export class HomeComponent implements OnInit {
     this.checkerService.blockUnblockWebsite();
   }
 
-  async logout(): Promise<void> {
+  logout() {
     this.authService.logout().then(_ => {
       this.router.navigate(['login']);
     });

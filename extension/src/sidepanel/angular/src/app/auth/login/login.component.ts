@@ -46,12 +46,10 @@ export class LoginComponent implements OnInit {
       this.authService.login(
         this.loginForm!!.value.email,
         this.loginForm!!.value.password
-      ).then(res => {
+      ).then((response: any) => {
         this.loginLoading = false
-        if(res) this.router.navigate(['']) //go home
-      }).catch(err => {
-        this.loginLoading = false
-        this._snackBar.open(err.message)
+        if (response.done) this.router.navigate(['']); //go home
+        else this._snackBar.open(response.error);
       });
     } else {
       this.loginForm!!.markAllAsTouched(); // Highlight validation errors

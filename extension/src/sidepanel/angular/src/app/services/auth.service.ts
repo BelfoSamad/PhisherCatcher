@@ -9,7 +9,7 @@ export class AuthService {
   async register(email: string, password: string) {
     return new Promise((resolve) => {
       chrome.runtime.sendMessage({target: "offscreen", action: "register", email: email, password: password}, (response) => {
-        resolve(response.done);
+        resolve(response);
       });
     });
   }
@@ -17,8 +17,8 @@ export class AuthService {
   async login(email: string, password: string) {
     return new Promise((resolve) => {
       chrome.runtime.sendMessage({target: "offscreen", action: "login", email: email, password: password}, (response) => {
-        chrome.storage.local.set(response.settings, () => { });
-        resolve(response.done);
+        if (response.done) chrome.storage.local.set(response.settings, () => { });
+        resolve(response);
       });
     });
   }
