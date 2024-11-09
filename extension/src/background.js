@@ -34,13 +34,13 @@ chrome.runtime.onMessage.addListener((message) => {
 });
 
 //------------------------------- Tab Handling
-chrome.tabs.onUpdated.addListener(async (tabId, changeInfo, tab) => {
-  if (tabId == activeTabId & changeInfo.status == "complete") {
+chrome.webNavigation.onCompleted.addListener((details) => {
+  if (details.frameId === 0) {
     // extract domain
-    const domain = new URL(tab.url).hostname.split(":")[0].toLowerCase();
-    console.log("Domain Caught: " + domain);
+    const domain = new URL(details.url).hostname.split(":")[0].toLowerCase();
+    console.log("Domain Caught: " + details.url);
     // verify if check is needed, then do check
-    if (preCheck(tab.url, domain)) doCheck(domain);
+    if (preCheck(details.url, domain)) doCheck(domain);
   }
 });
 chrome.tabs.onRemoved.addListener((tabId, _removeInfo) => {
@@ -55,7 +55,7 @@ chrome.tabs.onActivated.addListener((activeInfo) => {
 //------------------------------- Check URL
 function preCheck(url, domain) {
   // check if new tab or chrome related tab
-  if (url.startsWith("chrome://") || domain === "newtab") {
+  if (url.startsWith("chrome://")) {
     tabs.set(activeTabId, null); // set locally
     sendAnalysis(null, false); // send to sidepanel
     return false;
