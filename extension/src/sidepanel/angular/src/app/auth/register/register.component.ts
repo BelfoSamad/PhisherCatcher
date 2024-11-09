@@ -37,7 +37,7 @@ export class RegisterComponent implements OnInit {
     this.registerForm = this.fb.group({
       email: ['', [Validators.required, Validators.email]],
       password: ['', [Validators.required, Validators.minLength(6)]],
-      confirmPassword: ['']
+      confirmPassword: ['', [this.confirmPasswordValidator]]
     });
   }
 
@@ -49,7 +49,7 @@ export class RegisterComponent implements OnInit {
         this.registerForm!!.value.password
       ).then(res => {
         this.registerLoading = false
-        if(res) this.router.navigate(['']) //go home
+        if (res) this.router.navigate(['']) //go home
       }).catch(err => {
         this.registerLoading = false
         this._snackBar.open(err.message)
@@ -60,9 +60,9 @@ export class RegisterComponent implements OnInit {
   }
 
   confirmPasswordValidator: ValidatorFn = (control: AbstractControl): ValidationErrors | null => {
-    console.log(control.value)
-    console.log(control.value.confirmPassword)
-    return control.value.password === control.value.confirmPassword ? null : {PasswordNoMatch: true};
+    if (control.parent?.get('password')?.value === control.parent?.get('confirmPassword')?.value && control.parent?.get('password')?.value != undefined)
+      return null;
+    else return {passwordNoMatch: true};
   };
 
 }

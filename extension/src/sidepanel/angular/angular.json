@@ -25,10 +25,15 @@
             ],
             "tsConfig": "tsconfig.app.json",
             "inlineStyleLanguage": "scss",
-            "assets": [],
+            "assets": [
+              {
+                "glob": "**/*",
+                "input": "public"
+              }
+            ],
             "styles": [
-              "src/styles/root.css",
-              "src/styles.scss"
+              "src/styles.scss",
+              "src/styles/root.css"
             ],
             "scripts": []
           },
@@ -87,7 +92,8 @@
               }
             ],
             "styles": [
-              "src/styles.scss"
+              "src/styles.scss",
+              "src/styles/root.css"
             ],
             "scripts": []
           }

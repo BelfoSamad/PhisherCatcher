@@ -22,7 +22,7 @@
         <mat-error class="mat-body-medium" *ngIf="registerForm?.touched && registerForm!!.get('password')?.hasError('required')">
           Please enter your password.
         </mat-error>
-        <mat-error class="mat-body-medium" *ngIf="registerForm?.touched && registerForm!!.get('password')?.hasError('minLength')">
+        <mat-error class="mat-body-medium" *ngIf="registerForm?.touched && registerForm!!.get('password')?.hasError('minlength')">
           Your password must be a minimum of 6 characters.
         </mat-error>
       </mat-form-field>
@@ -33,7 +33,7 @@
         <mat-label>Confirm Password</mat-label>
         <input matInput type="password" class="mat-body-medium" placeholder="Re-enter the password"
           formControlName="confirmPassword" required />
-        <mat-error class="mat-body-medium" *ngIf="registerForm?.touched && registerForm!!.get('confirmPassword')?.hasError('PasswordNoMatch')">
+        <mat-error class="mat-body-medium" *ngIf="registerForm?.touched && registerForm!!.get('confirmPassword')?.hasError('passwordNoMatch')">
             Passwords do not match.
         </mat-error>
       </mat-form-field>
