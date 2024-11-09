@@ -12,4 +12,4 @@ output:
     words?(array): string, list of the suspicious words within the domain
 ---
 
-Does this domain name "{{domain}}" have any suspicious that suggest urgency, warning or relates to security like: urgent, verify, secure, login, account. 
+Does this domain name "{{domain}}" have any  words that suggest urgency, warning or relates to security like: urgent, verify, secure, login, account. 
