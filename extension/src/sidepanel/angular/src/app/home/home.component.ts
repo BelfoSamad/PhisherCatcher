@@ -29,7 +29,6 @@ export class HomeComponent implements OnInit {
   private _snackBar = inject(MatSnackBar);
 
   //Data
-  settings: any | undefined;
   analysis: any | undefined | null;
   isAnalyzing: boolean = false;
   manualCheckAllowed: boolean = false;
@@ -39,9 +38,6 @@ export class HomeComponent implements OnInit {
   constructor(private router: Router, private zone: NgZone, private checkerService: CheckerService, private authService: AuthService) { }
 
   async ngOnInit(): Promise<void> {
-    // get settings
-    this.settings = await chrome.storage.local.get(["enableAutoBlock", "enableUnblocking", "enableForceBlock"]);
-
     // listen to messages
     chrome.runtime.onMessage.addListener((message) => {
       this.zone.run(() => {

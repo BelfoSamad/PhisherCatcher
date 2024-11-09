@@ -80,10 +80,10 @@ async function doCheck(domain) {
   // check only if user is logged-in
   if (userLoggedIn) {
     // get settings
-    const settings = await chrome.storage.local.get(["enableAutoScan", "enableAutoBlock", "enableForceBlock"]);
+    const settings = await chrome.storage.local.get(["enableAutoCheck", "enableAutoBlock", "enableForceBlock"]);
     // start check (and animations)
     startAnimations(activeTabId);
-    const analysis = await checkUrl(domain, settings['enableAutoScan'] ?? defaults.enableAutoScan);
+    const analysis = await checkUrl(domain, settings['enableAutoCheck'] ?? defaults.enableAutoCheck);
     // set analysis
     tabs.set(activeTabId, analysis); // set locally
     sendAnalysis(analysis, analysis == undefined); // send to sidepanel

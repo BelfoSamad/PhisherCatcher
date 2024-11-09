@@ -13,8 +13,7 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 export {app}
 export const defaults = {
-  enableAutoScan: true,
-  enableAutoBlock: true,
-  enableForceBlock: true,
-  enableUnblocking: true
+  enableAutoCheck: true, // check automatically
+  enableAutoBlock: true, // auto block website after check
+  enableForceBlock: true, // allow only when legit
 }
