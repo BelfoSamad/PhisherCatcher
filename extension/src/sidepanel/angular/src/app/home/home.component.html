@@ -13,38 +13,38 @@
     </mat-toolbar>
     <div class="content">
         @if(checkError) {
-            <p class="message loading-message">An error happened while checking</p>
+        <p class="message loading-message">An error happened while checking</p>
         }
         @else if(analysis === undefined) {
-            @if (isAnalyzing) {
-                <div class="animated-gradient"></div>
-            }@else {
-                @if(manualCheckAllowed) {
-                    <div class="analyze-message">
-                        <p class="message">Auto check is disabled, Click Analyze to check URL!</p>
-                        <button class="analyze" mat-flat-button (click)="analyzeWebsite()">
-                            <span class="mat-label-large">Analyze</span>
-                        </button>
-                    </div>
-                }@else {
-                    <p class="message loading-message">Checking URL, if it takes too long please refresh the page!</p>
-                }
-            }
+        @if (isAnalyzing) {
+        <div class="animated-gradient"></div>
+        }@else {
+        @if(manualCheckAllowed) {
+        <div class="analyze-message">
+            <p class="message">Auto check is disabled, Click Analyze to check URL!</p>
+            <button class="analyze" mat-flat-button (click)="analyzeWebsite()">
+                <span class="mat-label-large">Analyze</span>
+            </button>
+        </div>
+        }@else {
+        <p class="message loading-message">Checking URL, if it takes too long please refresh the page!</p>
+        }
+        }
         } @else if (analysis === null) {
-            <p class="message">The tab is either a New Tab or a Chrome tab (settings, extensions...etc.)</p>
+        <p class="message">The tab is either a New Tab or a Chrome tab (settings, extensions...etc.)</p>
         } @else {
         <div class="verdict-box" [ngClass]="analysis.decision.toString().toLowerCase()">
             <span>{{ analysis.verdict }}</span>
-            <span *ngIf="analysis.decision != 'Legit'">, </span>
+            <span *ngIf="analysis.decision != 'Legit'"> - </span>
             <button *ngIf="analysis.decision != 'Legit'" (click)="handleBlock()">Block/Unblock</button>
         </div>
         @if(currentIndex == -1) {
         <div class="percentage-container">
             <svg class="percentage-background" viewBox="0 0 256 256">
-              <circle cx="128" cy="128" r="124" class="background-circle" />
+                <circle cx="128" cy="128" r="124" class="background-circle" />
             </svg>
             <mat-progress-spinner [mode]="'determinate'" [strokeWidth]="8" [diameter]="256"
-                [value]="analysis.percentage" color="secondary"></mat-progress-spinner>
+                [value]="analysis.percentage" color="error"></mat-progress-spinner>
             <p class="percentage-label">{{analysis.percentage}}%</p>
         </div>
         } @else {

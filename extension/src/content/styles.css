@@ -49,7 +49,7 @@
   left: 0px;
   right: 0px;
   bottom: 0px;
-  background: linear-gradient(var(--a), #ffbe0b, #fb5607, #ff006e, #8338ec, #3a86ff);
+  background: linear-gradient(var(--a), #ecd493, #ecaf93, #ec93ba, #b893ec, #93b5ec);
   filter: blur(32px);
   /* Creates the soft shadow effect */
   z-index: 99999;

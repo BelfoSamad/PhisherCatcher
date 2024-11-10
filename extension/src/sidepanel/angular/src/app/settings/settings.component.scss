@@ -20,6 +20,10 @@ mat-toolbar h4 {
     font-weight: 700;
 }
 
+mat-icon {
+    color: var(--sys-on-background);
+}
+
 form {
     display: flex;
     flex-direction: column;

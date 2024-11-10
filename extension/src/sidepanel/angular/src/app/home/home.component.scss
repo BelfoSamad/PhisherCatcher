@@ -11,6 +11,10 @@ mat-toolbar {
     padding-top: 16px;
 }
 
+mat-icon {
+    color: var(--sys-on-background);
+}
+
 .spacer {
     flex: 1 1 auto;
 }
@@ -72,34 +76,35 @@ mat-toolbar {
     width: 90%;
     height: 256px;
     border-radius: 16px;
-    background: linear-gradient(var(--angle), #ffbe0b, #fb5607, #ff006e, #8338ec, #3a86ff);
+    background: linear-gradient(var(--angle), #ecd493, #ecaf93, #ec93ba, #b893ec, #93b5ec);
     background-size: 200% 200%;
     align-self: center;
     justify-self: center;
-    animation: moveGradient 5s infinite alternate;
+    animation: moveGradient 7s infinite alternate;
 }
 
 .verdict-box {
-    display: flex;
     justify-self: flex-start;
     font-family: "Poppins", sans-serif;
     padding: 16px;
     border-radius: 4px;
-    color: white;
     font-size: 14px;
     margin-top: 16px;
 }
 
 .legit {
-    background-color: #4caf50;
+    background-color: var(--sys-legit-background);
+    color: var(--sys-legit-on-background);
 }
 
 .suspicious {
-    background-color: #ff9800;
+    background-color: var(--sys-suspicious-background);
+    color: var(--sys-suspicious-on-background);
 }
 
 .malicious {
-    background-color: #f44336;
+    background-color: var(--sys-malicious-background);
+    color: var(--sys-suspicious-on-background);
 }
 
 .verdict-box button {
@@ -109,7 +114,6 @@ mat-toolbar {
 button {
     background: none;
     border: none;
-    color: white;
     font-weight: bold;
     cursor: pointer;
 }
@@ -173,11 +177,11 @@ button {
 
 .indicators span {
     font-size: 24px;
-    color: var(--mdc-elevated-card-container-color);
+    color: var(--sys-on-background);
 }
 
 .indicators .active {
-    color: var(--sys-secondary);
+    color: var(--sys-inverse-secondary);
 }
 
 .navigation-buttons {
