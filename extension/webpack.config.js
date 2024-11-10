@@ -12,6 +12,11 @@ module.exports = {
     background: './src/background.js',
     utilities: './src/utilities.js'
   },
+  performance: {
+    hints: false,
+    maxEntrypointSize: 512000,
+    maxAssetSize: 512000
+  },
   plugins: [
     new CleanWebpackPlugin({cleanStaleWebpackAssets: false}),
     new HtmlWebpackPlugin({

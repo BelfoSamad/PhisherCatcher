@@ -23,7 +23,7 @@ chrome.runtime.onMessage.addListener((message) => {
           // extract domain
           const domain = new URL(activeTab.url).hostname.split(":")[0].toLowerCase();
           // verify if check is needed, then do check
-          if (preCheck(activeTab.url, domain)) doCheck(domain);
+          if (preCheck(activeTab.url, domain)) doCheck(domain, true);
         });
         break;
       case "block":
@@ -38,9 +38,8 @@ chrome.webNavigation.onCompleted.addListener((details) => {
   if (details.frameId === 0) {
     // extract domain
     const domain = new URL(details.url).hostname.split(":")[0].toLowerCase();
-    console.log("Domain Caught: " + details.url);
     // verify if check is needed, then do check
-    if (preCheck(details.url, domain)) doCheck(domain);
+    if (preCheck(details.url, domain)) doCheck(domain, false);
   }
 });
 chrome.tabs.onRemoved.addListener((tabId, _removeInfo) => {
@@ -76,19 +75,20 @@ function preCheck(url, domain) {
   return true;
 }
 
-async function doCheck(domain) {
+async function doCheck(domain, manualCheck) {
   // check only if user is logged-in
   if (userLoggedIn) {
     // get settings
     const settings = await chrome.storage.local.get(["enableAutoCheck", "enableAutoBlock", "enableForceBlock"]);
     // start check (and animations)
     startAnimations(activeTabId);
-    const result = await checkUrl(domain, settings['enableAutoCheck'] ?? defaults.enableAutoCheck);
-    if (result.error != null) sendError(result.error)
+    const result = await checkUrl(domain, (settings['enableAutoCheck'] ?? defaults.enableAutoCheck) || manualCheck);
+    if (result == undefined) sendAnalysis(undefined, true); // send to sidepanel (manual check)
+    else if (result.error != null) sendError(result.error)
     else {
       // set analysis
       tabs.set(activeTabId, result.analysis); // set locally
-      sendAnalysis(result.analysis, result.analysis == undefined); // send to sidepanel
+      sendAnalysis(result.analysis, result.analysis == undefined); // send to sidepanel (analysis rarely undefined)
 
       // block website
       if (settings['enableAutoBlock'] ?? defaults.enableAutoBlock) // Auto block allowed

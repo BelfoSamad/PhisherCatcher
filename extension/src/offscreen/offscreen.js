@@ -71,7 +71,6 @@ function handleChromeMessages(message, _sender, sendResponse) {
                     }
                 });
             } catch (e) {
-                console.log(e.message);
                 sendResponse({error: e.message, analysis: null});
             }
             return true;

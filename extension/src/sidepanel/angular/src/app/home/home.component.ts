@@ -36,11 +36,13 @@ export class HomeComponent implements OnInit {
   currentIndex = -1;
 
   //Constructor
-  constructor(private router: Router, private zone: NgZone, private checkerService: CheckerService, private authService: AuthService) { }
+  constructor(private router: Router, private zone: NgZone, private checkerService: CheckerService, private authService: AuthService) {
+    this.analysis = this.checkerService.getAnalysis(); // get already saved analysis
+  }
 
   async ngOnInit(): Promise<void> {
     // listen to messages
-    chrome.runtime.onMessage.addListener((message) => {
+    this.checkerService.listenToAnalysis().subscribe((message: any) => {
       this.zone.run(() => {
         if (message.target == "sidepanel") switch (message.action) {
           case "analysis":

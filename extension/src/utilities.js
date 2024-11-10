@@ -12,11 +12,14 @@ export async function checkUrl(domain, autoCheck) {
         if (data.websites.includes(domain)) {
             // website well known, return Legit
             return {
-                id: domain,
-                percentage: 0,
-                verdict: "This is a well known website. Feel save to use it",
-                reasons: null,
-                decision: "Legit"
+                error: null,
+                analysis: {
+                    id: domain,
+                    percentage: 0,
+                    verdict: "This is a well known website. Feel save to use it",
+                    reasons: null,
+                    decision: "Legit"
+                }
             }
         } else {
             // check in db/agent
