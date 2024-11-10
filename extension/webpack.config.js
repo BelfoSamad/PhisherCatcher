@@ -30,7 +30,7 @@ module.exports = {
         {from: './src/websites.json'},
         {from: './src/content/', to: './content/'},
         {from: './src/images/', to: './images/'},
-        {from: './src/sidepanel/prod/browser/'},
+        {from: './src/sidepanel/prod/browser/', to: './sidepanel/'},
       ],
     }),
     new FileManagerPlugin({

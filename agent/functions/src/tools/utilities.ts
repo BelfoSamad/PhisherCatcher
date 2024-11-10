@@ -105,10 +105,10 @@ export const checkSSL = async (domain: string) => {
             } else {
                 resolve({isCertificateValid: false});
             }
-        }).on('error', (err) => {
+        }).on("error", (err) => {
             console.log("An error caught, ignore!. Error: " + err);
             resolve({isCertificateValid: false});
-        });;
+        });
 
         req.end();
     });
