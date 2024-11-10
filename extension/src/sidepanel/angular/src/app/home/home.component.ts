@@ -60,6 +60,7 @@ export class HomeComponent implements OnInit {
             }
             break;
           case "start_animation":
+            console.log("Enabled Animations");
             this.isAnalyzing = true;
             break;
         }

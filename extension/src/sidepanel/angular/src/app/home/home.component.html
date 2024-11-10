@@ -17,7 +17,10 @@
         }
         @else if(analysis === undefined) {
         @if (isAnalyzing) {
-        <div class="animated-gradient"></div>
+            <div class="loading">
+                <p class="message loading-message">Checking website...</p>
+                <div class="animated-gradient"></div>
+            </div>
         }@else {
         @if(manualCheckAllowed) {
         <div class="analyze-message">

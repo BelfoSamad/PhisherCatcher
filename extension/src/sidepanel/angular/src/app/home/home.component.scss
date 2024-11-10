@@ -72,14 +72,19 @@ mat-icon {
     animation: loadingText 0.5s infinite alternate;
 }
 
-.animated-gradient {
+.loading {
     width: 90%;
+    align-self: center;
+    justify-self: center;
+}
+
+.animated-gradient {
+    width: 100%;
     height: 256px;
+    margin-top: 4px;
     border-radius: 16px;
     background: linear-gradient(var(--angle), #ecd493, #ecaf93, #ec93ba, #b893ec, #93b5ec);
     background-size: 200% 200%;
-    align-self: center;
-    justify-self: center;
     animation: moveGradient 7s infinite alternate;
 }
 
