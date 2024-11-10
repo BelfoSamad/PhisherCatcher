@@ -1,37 +1,39 @@
 <div class="login-container">
-    <h1 class="logo">Catcher</h1>
-    <form [formGroup]="loginForm!!" (ngSubmit)="onSubmit()">
-      <!-- Email Input -->
-      <mat-form-field subscriptSizing="dynamic" appearance="outline">
-        <mat-label>Email</mat-label>
-        <input matInput type="email" class="mat-body-medium" placeholder="Enter your email address"
-          formControlName="email" required />
-        <mat-error class="mat-body-medium" *ngIf="loginForm?.touched && loginForm!!.get('email')?.hasError('required')">
-          Please enter your email address.
-        </mat-error>
-        <mat-error class="mat-body-medium" *ngIf="loginForm?.touched && loginForm!!.get('email')?.hasError('email')">
-          The email you provided is not valid.
-        </mat-error>
-      </mat-form-field>
-  
-      <!-- Password Input -->
-      <mat-form-field subscriptSizing="dynamic" appearance="outline">
-        <mat-label>Password</mat-label>
-        <input matInput type="password" class="mat-body-medium" placeholder="Enter a strong password"
-          formControlName="password" required />
-        <mat-error class="mat-body-medium" *ngIf="loginForm?.touched && loginForm!!.get('password')?.hasError('required')">
-          Please enter your password.
-        </mat-error>
-        <mat-error class="mat-body-medium" *ngIf="loginForm?.touched && loginForm!!.get('password')?.hasError('minLength')">
-          Your password must be a minimum of 6 characters.
-        </mat-error>
-      </mat-form-field>
-  
-      <!-- Login Button -->
-      <button mat-flat-button [disabled]="loginLoading" type="submit">
-        <mat-spinner [diameter]="24" [color]="'#111413'" *ngIf="loginLoading"></mat-spinner>
-        <span class="mat-label-large" *ngIf="!loginLoading">Login</span>
-      </button>
-    </form>
-    <p>New to the Extension?, <a routerLink="/register">Register</a></p>
-  </div>
+  <img src="assets/big-logo.png" class="logo" />
+  <form [formGroup]="loginForm!!" (ngSubmit)="onSubmit()">
+    <!-- Email Input -->
+    <mat-form-field subscriptSizing="dynamic" appearance="outline">
+      <mat-label>Email</mat-label>
+      <input matInput type="email" class="mat-body-medium" placeholder="Enter your email address"
+        formControlName="email" required />
+      <mat-error class="mat-body-medium" *ngIf="loginForm?.touched && loginForm!!.get('email')?.hasError('required')">
+        Please enter your email address.
+      </mat-error>
+      <mat-error class="mat-body-medium" *ngIf="loginForm?.touched && loginForm!!.get('email')?.hasError('email')">
+        The email you provided is not valid.
+      </mat-error>
+    </mat-form-field>
+
+    <!-- Password Input -->
+    <mat-form-field subscriptSizing="dynamic" appearance="outline">
+      <mat-label>Password</mat-label>
+      <input matInput type="password" class="mat-body-medium" placeholder="Enter a strong password"
+        formControlName="password" required />
+      <mat-error class="mat-body-medium"
+        *ngIf="loginForm?.touched && loginForm!!.get('password')?.hasError('required')">
+        Please enter your password.
+      </mat-error>
+      <mat-error class="mat-body-medium"
+        *ngIf="loginForm?.touched && loginForm!!.get('password')?.hasError('minLength')">
+        Your password must be a minimum of 6 characters.
+      </mat-error>
+    </mat-form-field>
+
+    <!-- Login Button -->
+    <button mat-flat-button [disabled]="loginLoading" type="submit">
+      <mat-spinner [diameter]="24" [color]="'#111413'" *ngIf="loginLoading"></mat-spinner>
+      <span class="mat-label-large" *ngIf="!loginLoading">Login</span>
+    </button>
+  </form>
+  <p>New to the Extension?, <a routerLink="/register">Register</a></p>
+</div>

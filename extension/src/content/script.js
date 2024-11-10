@@ -14,7 +14,7 @@ function blockTab() {
 
     // create the image element
     const image = document.createElement("img");
-    image.src = "your-image-url.png";
+    image.src = chrome.runtime.getURL("images/icon128.png");
 
     // Create the text element
     const messageText = document.createElement("p");

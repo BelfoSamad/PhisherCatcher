@@ -24,6 +24,7 @@ module.exports = {
         {from: './src/manifest.json'},
         {from: './src/websites.json'},
         {from: './src/content/', to: './content/'},
+        {from: './src/images/', to: './images/'},
         {from: './src/sidepanel/prod/browser/'},
       ],
     }),

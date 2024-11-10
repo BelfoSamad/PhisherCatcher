@@ -40,6 +40,8 @@
 
 .phishercatcher-block-message img {
   margin-bottom: 16px;
+  width: 64px;
+  height: 64px;
 }
 
 .phishsercatcher-overlay::before {

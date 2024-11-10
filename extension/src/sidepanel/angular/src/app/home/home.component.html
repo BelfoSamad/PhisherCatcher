@@ -1,6 +1,6 @@
 <div class="container">
     <mat-toolbar>
-        <span class="topbar-logo">Catcher</span>
+        <img src="assets/logo.png" class="logo"/>
         <span class="spacer"></span>
         <div class="navigation-buttons">
             <button mat-icon-button (click)="goSettings()">
@@ -45,7 +45,7 @@
             </svg>
             <mat-progress-spinner [mode]="'determinate'" [strokeWidth]="8" [diameter]="256"
                 [value]="analysis.percentage" color="error"></mat-progress-spinner>
-            <p class="percentage-label">{{analysis.percentage}}%</p>
+            <p class="percentage-label">{{analysis.percentage}}%<br/>Suspecious</p>
         </div>
         } @else {
         <mat-card appearance="outlined" class="reason-card">

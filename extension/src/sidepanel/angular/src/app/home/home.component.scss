@@ -8,7 +8,13 @@
 mat-toolbar {
     background-color: transparent;
     padding-right: 0px;
+    padding-left: 8px;
     padding-top: 16px;
+}
+
+.logo {
+    width: 128px;
+    height: 48px;
 }
 
 mat-icon {
@@ -17,12 +23,6 @@ mat-icon {
 
 .spacer {
     flex: 1 1 auto;
-}
-
-.topbar-logo {
-    font-size: 32px;
-    color: var(--sys-secondary);
-    font-family: "Protest Guerrilla", sans-serif;
 }
 
 .navigation-buttons {

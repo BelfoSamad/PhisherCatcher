@@ -13,10 +13,9 @@ form {
 }
 
 .logo {
-    font-size: 76px;
-    color: var(--sys-secondary);
+    width: 256px;
+    height: 96px;
     margin-bottom: 48px;
-    font-family: "Protest Guerrilla", sans-serif;
 }
 
 mat-form-field {
@@ -48,5 +47,5 @@ p {
 p a {
     text-decoration: none;
     font-weight: 500;
-    color: var(--sys-secondary);
+    color: var(--sys-primary);
 }
