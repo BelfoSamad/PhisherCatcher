@@ -34,12 +34,21 @@ chrome.runtime.onMessage.addListener((message) => {
 });
 
 //------------------------------- Tab Handling
-chrome.webNavigation.onCompleted.addListener((details) => {
+chrome.webNavigation.onCompleted.addListener(async (details) => {
   if (details.frameId === 0) {
     // extract domain
     const domain = new URL(details.url).hostname.split(":")[0].toLowerCase();
     // verify if check is needed, then do check
     if (preCheck(details.url, domain)) doCheck(domain, false);
+    else {
+      // re-apply block if website is not legit
+      const settings = await chrome.storage.local.get(["enableAutoBlock", "enableForceBlock"]);
+      const analysis = tabs.get(activeTabId)
+      // block website
+      if (settings['enableAutoBlock'] ?? defaults.enableAutoBlock) // Auto block allowed
+        if (analysis?.decision == "Malicious" || (analysis?.decision == "Suspicious" && (settings['enableForceBlock'] ?? defaults.enableForceBlock)))
+          blockTab(activeTabId); //URL is either Malicious (direct block) or Suspicious while Force Block is enabled
+    }
   }
 });
 chrome.tabs.onRemoved.addListener((tabId, _removeInfo) => {
