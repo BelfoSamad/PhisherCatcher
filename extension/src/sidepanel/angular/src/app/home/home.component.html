@@ -21,17 +21,17 @@
         }@else {
         @if(manualCheckAllowed) {
         <div class="analyze-message">
-            <p class="message">Auto check is disabled, Click Analyze to check URL!</p>
+            <p class="message">Auto-check is disabled. Click 'Analyze' to verify the URL!</p>
             <button class="analyze" mat-flat-button (click)="analyzeWebsite()">
                 <span class="mat-label-large">Analyze</span>
             </button>
         </div>
         }@else {
-        <p class="message loading-message">Checking URL, if it takes too long please refresh the page!</p>
+        <p class="message loading-message">Verifying the URL. If this takes too long, please refresh the page!</p>
         }
         }
         } @else if (analysis === null) {
-        <p class="message">The tab is either a New Tab or a Chrome tab (settings, extensions...etc.)</p>
+        <p class="message">This tab is either a New Tab or a Chrome system tab (e.g., settings, extensions, etc.).</p>
         } @else {
         <div class="verdict-box" [ngClass]="analysis.decision.toString().toLowerCase()">
             <span>{{ analysis.verdict }}</span>
