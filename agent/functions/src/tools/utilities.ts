@@ -19,7 +19,7 @@ export const checkAddressFormat = (domain: string) => {
     return ipv4Regex.test(domain) ? "Decimal IPV4" :
         ipv4HexRegex.test(domain) ? "Hexadecimal IPV4" :
             ipv6Regex.test(domain) ? "Regular IPV6" :
-            ipv6CRegex.test(domain) ? "Compressed IPV6" : "Normal";
+                ipv6CRegex.test(domain) ? "Compressed IPV6" : "Normal";
 };
 
 export const checkWHOIS = async (apiKey: string, domain: string) => {
@@ -105,7 +105,10 @@ export const checkSSL = async (domain: string) => {
             } else {
                 resolve({isCertificateValid: false});
             }
-        });
+        }).on('error', (err) => {
+            console.log("An error caught, ignore!. Error: " + err);
+            resolve({isCertificateValid: false});
+        });;
 
         req.end();
     });

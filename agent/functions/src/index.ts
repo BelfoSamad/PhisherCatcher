@@ -19,7 +19,7 @@ const googleAIapiKey = defineSecret("GOOGLE_GENAI_API_KEY");
 const whoisApiKey = defineSecret("WHOIS_API_KEY");
 
 // ----------------------------------------- Initializations
-const debug = false;
+const debug = true;
 const app = initializeApp({credential: debug ? credential.cert("./phishercatcher-creds.json") : applicationDefault()});
 const firestore = getFirestore(app);
 if (debug) {
