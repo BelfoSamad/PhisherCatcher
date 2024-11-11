@@ -20,7 +20,7 @@ const whoisApiKey = defineSecret("WHOIS_API_KEY");
 
 // ----------------------------------------- Initializations
 const debug = false;
-const app = initializeApp({credential: debug ? credential.cert("./phishercatcher-creds.json") : applicationDefault()});
+const app = initializeApp({credential: debug ? credential.cert("./firebase-creds.json") : applicationDefault()});
 const firestore = getFirestore(app);
 if (debug) {
   firestore.settings({

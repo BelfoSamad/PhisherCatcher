@@ -11,4 +11,4 @@ node_modules/
 
 # Others
 .env
-phishercatcher-creds.json
+firebase-creds.json
