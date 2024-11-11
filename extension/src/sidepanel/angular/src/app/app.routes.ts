@@ -4,8 +4,14 @@ import {LoginComponent} from './auth/login/login.component';
 import {HomeComponent} from './home/home.component';
 import {AuthGuard} from './services/auth.guard';
 import {SettingsComponent} from './settings/settings.component';
+import {BoardingComponent} from './boarding/boarding.component';
 
 export const routes: Routes = [
+    {
+        path: 'boarding',
+        component: BoardingComponent,
+        title: 'Boarding'
+    },
     {
         path: 'login',
         component: LoginComponent,
