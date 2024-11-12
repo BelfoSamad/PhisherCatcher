@@ -16,7 +16,7 @@ export async function checkUrl(domain, autoCheck) {
                 analysis: {
                     id: domain,
                     percentage: 0,
-                    verdict: "This is a well known website. Feel save to use it",
+                    verdict: "This is a well known website. Feel safe to use it",
                     reasons: null,
                     decision: "Legit"
                 }
