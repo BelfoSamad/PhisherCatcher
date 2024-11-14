@@ -24,23 +24,19 @@ export async function checkUrl(domain, autoCheck, localAiAvailable) {
         if (localAiAvailable) {
             // Local Ai available, run prompt
             localAiCheckResult = await runPrompt(`Is this domain "${domain}" a well known and legit domain or not, respond by either Yes or No`);
-            switch (localAiCheckResult) {
-                case "Yes":
+            if (localAiCheckResult != null) switch (localAiCheckResult.toLowerCase()) {
+                case "yes":
                     // domain is recognized, return analysis
                     return {
                         error: null,
                         analysis: legitWebsiteAnalysis(domain)
                     };
-                case "No":
-                    // Do nothing, continue with further checking
-                    break;
                 default:
-                    // either null (issue handling prompt) or LLM failed to handle prompt properly
-                    localAiCheckResult = null; // make sure it is null in case it is LLM failure
+                    localAiCheckResult = null; // either a failure or response by no
             }
         }
 
-        if (!localAiAvailable || (localAiAvailable && localAiCheckResult == null)) {
+        if (!localAiAvailable || localAiCheckResult == null) {
             // check if domain is well known
             const response = await fetch(chrome.runtime.getURL('websites.json'));
             const data = await response.json();
@@ -76,9 +72,7 @@ export function blockTab(tabId) {
 async function runPrompt(prompt) {
     try {
         if (!session) session = await chrome.aiOriginTrial.languageModel.create();
-        const result = await session.prompt(prompt);
-        console.log(result);
-        return result;
+        return await session.prompt(prompt)
     } catch (e) {
         console.log("Error occured running prompt: " + e);
         reset();
