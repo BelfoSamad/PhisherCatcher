@@ -1,7 +1,5 @@
-Try the extension: https://chromewebstore.google.com/detail/PhisherCatcher/mfggnkoginjdhpfgaopbmgebjakcidbj
-
-> [!CAUTION]
-> Extension is still in Review! In case it hasn't been published yet, load the unpacked version which you can find in the repository.
+> [!TIP]
+> Try the extension: https://chromewebstore.google.com/detail/PhisherCatcher/mfggnkoginjdhpfgaopbmgebjakcidbj
 
 PhisherCatcher is a chrome extension that uses LLM powered by Gemini to analyze website details like domain, SSL, WHOIS records to detect phishint attempts.
 The project is split into 3 components: The front end (the extension), Firebase which handles the backend (Database and Authentication) and the agent built with Genkit and deployed into Firebase Functions.
