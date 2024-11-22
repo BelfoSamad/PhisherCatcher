@@ -41,6 +41,7 @@ This would make the extension auto-populate the database which first, saves toke
   - To deploy the agent to Firebase, use the command `firebase deploy`. (Make sure to set the variable `debug` back to false).
   - Check the official documentations for Genkit: https://firebase.google.com/docs/genkit
 - For the extension:
+  - After you have created a Firebase Project (while setting up the agent), Create a Web App copy the `firebaseConfig` constant and put it in a new file called `firebase_configs.js`.
   - You can find the Angular code related to the sidepanel on `extension/src/sidepanel/angular/`
   - You can build the extension using a predefined **Bash Script**, go to the root on terminal and run `sh bash.sh`
   - You can find the built extension on: `extension/dist/`
