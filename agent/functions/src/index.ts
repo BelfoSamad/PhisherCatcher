@@ -11,12 +11,10 @@ import {config} from "dotenv";
 import {getFirestore} from "firebase-admin/firestore";
 import {dotprompt, promptRef} from "@genkit-ai/dotprompt";
 import {defineFlow} from "@genkit-ai/flow";
-import {checkDomainWording, checkRecords} from "./tools";
 import {addWebsite} from "./tools/firestore";
 
 // Keys
 const googleAIapiKey = defineSecret("GOOGLE_GENAI_API_KEY");
-const whoisApiKey = defineSecret("WHOIS_API_KEY");
 
 // ----------------------------------------- Initializations
 const debug = false;
@@ -48,6 +46,7 @@ export const analyzeWebsiteFlow = debug ? defineFlow(
     name: "analyzeWebsiteFlow",
     inputSchema: z.object({
       domain: z.string(),
+      report: z.array(z.string()),
     }),
     outputSchema: z.object({
       percentage: z.number(),
@@ -66,6 +65,7 @@ export const analyzeWebsiteFlow = debug ? defineFlow(
     },
     inputSchema: z.object({
       domain: z.string(),
+      report: z.array(z.string()),
     }),
     outputSchema: z.object({
       percentage: z.number(),
@@ -81,18 +81,12 @@ export const analyzeWebsiteFlow = debug ? defineFlow(
 );
 
 async function doAnalyzeWebsiteFlow(input: any): Promise<any> {
-  // Analyse Domain
-  const suspicions = [
-    ...(await checkDomainWording(input.domain)), // analyse wording
-    ...(await checkRecords(debug, input.domain, whoisApiKey)), // analyse records
-  ];
-
   // analyze website
   const analyzeWebsitePrompt = promptRef("analyze_website");
   const result = (await analyzeWebsitePrompt.generate({
     input: {
       url: input.domain,
-      analysis: suspicions.join("\n"),
+      analysis: input.report.join("\n"),
     },
   })).output();
 

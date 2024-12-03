@@ -1,3 +1,4 @@
+// Unused so far, moved checks to extension...
 import {promptRef} from "@genkit-ai/dotprompt";
 import {checkAddressFormat, checkSSL, checkTLD, checkWHOIS} from "./tools/utilities";
 import {SecretParam} from "firebase-functions/lib/params/types";
