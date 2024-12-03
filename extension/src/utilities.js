@@ -33,8 +33,8 @@ export function stopAnimations(tabId) {
     chrome.tabs.sendMessage(tabId, {action: "stop_animation"});
 }
 
-export function sendAnalysis(analysis, allowCheck) {
-    chrome.runtime.sendMessage({target: "sidepanel", action: "analysis", analysis: analysis, allowCheck: allowCheck});
+export function sendAnalysis(analysis) {
+    chrome.runtime.sendMessage({target: "sidepanel", action: "analysis", analysis: analysis});
 }
 
 export function sendError(error) {
