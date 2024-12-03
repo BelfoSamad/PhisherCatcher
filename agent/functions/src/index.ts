@@ -50,7 +50,6 @@ export const analyzeWebsiteFlow = debug ? defineFlow(
     }),
     outputSchema: z.object({
       percentage: z.number(),
-      verdict: z.string(),
       decision: z.string(),
       reasons: z.array(z.string()),
     }),
@@ -69,7 +68,6 @@ export const analyzeWebsiteFlow = debug ? defineFlow(
     }),
     outputSchema: z.object({
       percentage: z.number(),
-      verdict: z.string(),
       decision: z.string(),
       reasons: z.array(z.string()),
     }),

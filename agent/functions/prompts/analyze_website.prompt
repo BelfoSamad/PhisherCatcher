@@ -19,7 +19,6 @@ output:
   format: json
   schema:
     percentage: integer, percentage of suspicion of the URL, 0 means legit and 100 means definitely scam
-    verdict: string, one sentence that summarizes whether the website is safe and usable or not to explain to the user
     decision(enum, decision of the analysis about the website based on percentage): [Legit, Suspicious, Malicious]
     reasons?(array): string, a list of reasons why the website is not legit based on the Pre-Analysis Report and other factors, null if URL is legit
 
