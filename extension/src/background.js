@@ -1,5 +1,5 @@
 import {defaults} from "./configs";
-import {startAnimations, checkUrl, sendAnalysis, stopAnimations, blockTab, sendError} from "./utilities";
+import {startAnimations, checkUrl, sendTabDetails, sendTabError, stopAnimations, blockTab} from "./utilities";
 
 //------------------------------- Declarations
 let creating; // A global promise to avoid concurrency issues
@@ -12,6 +12,9 @@ chrome.sidePanel.setPanelBehavior({openPanelOnActionClick: true}).catch((error) 
 chrome.runtime.onMessage.addListener((message) => {
   if (message.target == "background") {
     switch (message.action) {
+      case "init":
+        sendTabDetails(tabs.get(activeTabId));
+        break;
       case "block":
         blockTab(activeTabId);
         break;
@@ -43,7 +46,7 @@ chrome.tabs.onRemoved.addListener((tabId, _removeInfo) => {
 chrome.tabs.onActivated.addListener((activeInfo) => {
   activeTabId = activeInfo.tabId;// update activeTabId
   // send analysis to sidepanel
-  sendAnalysis(tabs.get(activeTabId));
+  sendTabDetails(tabs.get(activeTabId));
 });
 
 //------------------------------- Check URL
@@ -51,7 +54,7 @@ function preCheck(url, domain) {
   // check if new tab or chrome related tab
   if (url.startsWith("chrome://")) {
     tabs.set(activeTabId, null); // set locally
-    sendAnalysis(null); // send to sidepanel
+    sendTabDetails(null); // send to sidepanel
     return false;
   }
 
@@ -62,7 +65,7 @@ function preCheck(url, domain) {
   for (const value of tabs.values()) {
     if (value?.id === domain) {
       tabs.set(activeTabId, value);
-      sendAnalysis(value);
+      sendTabDetails(value);
       return false;
     }
   }
@@ -71,27 +74,44 @@ function preCheck(url, domain) {
 }
 
 async function doCheck(domain) {
+  const summaryTabId = activeTabId; // save tab id since it might change
+
   // get settings
   const settings = await chrome.storage.local.get(["enableAutoBlock", "enableForceBlock"]);
 
-  // start check (and animations)
+  // starting check (animations)
   startAnimations(activeTabId);
+  tabs.set(summaryTabId, {...tabs.get(summaryTabId), isLoading: true});
+  sendTabDetails(tabs.get(summaryTabId));
+
+  // analyzing website
   const result = await checkUrl(domain);
-  if (result == undefined) sendAnalysis(undefined); // send to sidepanel
-  else if (result.error != null) sendError(result.error)
-  else {
-    // set analysis
-    tabs.set(activeTabId, result.analysis); // set locally
-    sendAnalysis(result.analysis); // send to sidepanel (analysis rarely undefined)
 
-    // block website
-    if (settings['enableAutoBlock'] ?? defaults.enableAutoBlock) // Auto block allowed
-      if (result.analysis.decision == "Malicious" || (result.analysis.decision == "Suspicious" && (settings['enableForceBlock'] ?? defaults.enableForceBlock)))
-        blockTab(activeTabId); //URL is either Malicious (direct block) or Suspicious while Force Block is enabled
+  // tab might be removed, check first if still exists then apply changes
+  if (tabs.has(summaryTabId)) {
+    // an error caught send Error to Sidepanel
+    if (result?.error != null) sendTabError(result.error);
+    else {
+      // set locally
+      tabs.set(summaryTabId, {
+        analysis: result.analysis,
+        error: null,
+        isLoading: false
+      });
+      // send back only if we are still in the same tab
+      if (summaryTabId == activeTabId) {
+        sendTabDetails(tabs.get(activeTabId));
+
+        // block website
+        if (settings['enableAutoBlock'] ?? defaults.enableAutoBlock) // Auto block allowed
+          if (result.analysis.decision == "Malicious" || (result.analysis.decision == "Suspicious" && (settings['enableForceBlock'] ?? defaults.enableForceBlock)))
+            blockTab(activeTabId); //URL is either Malicious (direct block) or Suspicious while Force Block is enabled
+      }
+    }
+
+    // stop animations
+    stopAnimations(summaryTabId);
   }
-
-  // stop animations
-  stopAnimations(activeTabId);
 }
 
 //------------------------------- Handle Offscreen Documents

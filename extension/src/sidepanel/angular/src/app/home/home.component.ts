@@ -30,13 +30,12 @@ export class HomeComponent implements OnInit {
 
   //Data
   analysis: any | undefined | null;
-  checkError = false;
   isAnalyzing: boolean = false;
   currentIndex = -1;
 
   //Constructor
   constructor(private router: Router, private zone: NgZone, private checkerService: CheckerService, private authService: AuthService) {
-    this.analysis = this.checkerService.getAnalysis(); // get already saved analysis
+    chrome.runtime.sendMessage({target: "background", action: "init"});
   }
 
   async ngOnInit(): Promise<void> {
@@ -44,18 +43,20 @@ export class HomeComponent implements OnInit {
     this.checkerService.listenToAnalysis().subscribe((message: any) => {
       this.zone.run(() => {
         if (message.target == "sidepanel") switch (message.action) {
-          case "analysis":
-            this.analysis = message.analysis;
-            this.isAnalyzing = false;
-            this.checkError = false;
+          case "tab":
+            const tabDetails = message.tab;
+            if (tabDetails === null) this.analysis = null;
+            else {
+              this.isAnalyzing = tabDetails?.isLoading ?? false;
+              this.analysis = tabDetails?.analysis;
+            }
             break;
           case "error":
-            if (message.error == "ERROR::AUTH") this.logout();
-            else {
-              this.analysis = undefined;
-              this.checkError = true;
-              this._snackBar.open(message.error);
-            }
+            this.isAnalyzing = false;
+            if (message.error == "ERROR::AUTH") {
+              this._snackBar.open("You have been Logged out, Re-Login again!");
+              setTimeout(() => {this.logout();}, 2000);
+            } else if (message.error != null) this._snackBar.open(message.error);
             break;
           case "start_animation":
             this.isAnalyzing = true;

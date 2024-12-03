@@ -2,7 +2,6 @@ function legitWebsiteAnalysis(domain) {
     return {
         id: domain,
         percentage: 0,
-        verdict: "This is a well known website. Feel safe to use it",
         reasons: null,
         decision: "Legit"
     }
@@ -11,7 +10,6 @@ function legitWebsiteAnalysis(domain) {
 
 export function startAnimations(tabId) {
     chrome.tabs.sendMessage(tabId, {action: "start_animation"});
-    chrome.runtime.sendMessage({target: "sidepanel", action: "start_animation"});
 }
 
 export async function checkUrl(domain) {
@@ -33,11 +31,11 @@ export function stopAnimations(tabId) {
     chrome.tabs.sendMessage(tabId, {action: "stop_animation"});
 }
 
-export function sendAnalysis(analysis) {
-    chrome.runtime.sendMessage({target: "sidepanel", action: "analysis", analysis: analysis});
+export function sendTabDetails(tab) {
+    chrome.runtime.sendMessage({target: "sidepanel", action: "tab", tab: tab});
 }
 
-export function sendError(error) {
+export function sendTabError(error) {
     chrome.runtime.sendMessage({target: "sidepanel", action: "error", error: error});
 }
 
