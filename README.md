@@ -4,26 +4,35 @@
 PhisherCatcher is a chrome extension that uses LLM powered by Gemini to analyze website details like domain, SSL, WHOIS records to detect phishint attempts.
 The project is split into 3 components: The front end (the extension), Firebase which handles the backend (Database and Authentication) and the agent built with Genkit and deployed into Firebase Functions.
 
-# Architecture
+The main project currently faces a major problem: **Should the extension check every website even well known ones?**. This is issue is covered in a primitive solution checking if the checked domain name exists in a hard-coded list of well known domain names. The list is too small and narrow and it misses a lot of well-known websites.
 
-## The Extension
+The newly available approach (in Experimental phase) is an In-device Large Language Model through **Gemini Nano** within Chrome. At this stage Gemini Nano will be only used to check if a domain name is well known or not, and in a future more stable releases it can move into a fully localized website legitimacy check.
 
-Represents the front end of the project, catches the active tab's newly updated URL and sends it to the agent for the analysis. Once results are returned, it shows the analysis and makes the appropriate actions. It is split into:
+# How does it work!
 
-- `background.js`: The core of the extension which handles the observation of the status of Tabs and the currently active Tab. It saves the relevent analysis in memory to save resources and provide a fast experience to the user. It first checks the website locally if it is a well known domain name, then calls the agent for the check if it isn't.
-- `offscreen.js`: Handles communications with Firebase (Authentication, Firestore and Functions). It provides DOM which is necessary to make some calls to Firebase without intercepting the user's experience.
-- `content-script.js`: Shows the loading analysis on the webpage and Blocks/Unblocks the website based on its legitimacy
-- `sidepanel.html`: the front end of the extension, built with Angular and handles the user's input (for Authentication - Login/Register), shows the analysis results and gets the preferences of the user (through the settings page)
+PhisherCatcher currently works with a hybrid approach checking the website through different stages:
 
-## The Agent
+- 1/ Check with **Chrome Built-in AI** if the website is well known or not.
+- 2/ In case of a negative response or an issue, it fallback into the original primitive check (checking website with a pre-defined hardcoded list).
+- 3/ In case after both checks the extension still doesn't recognize the website as legit (well-known). It does the online check through (1 - checking the database for already saved records then 2 - does the check with the deployed Gemini agent)
 
-Represents the core of the project. Built with Genkit. The agent receives the Domain name from the extension, starts preparing a Pre-analysis report checking the format of the domain (e.g. hyphens used, number of subdomains, words used...etc.) to catch any potential technique used by the scammer to make a familiar domain name, then checks the SSL certificate and WHOIS records to check if the domain's owner is legit or not...etc. This report is then fed to the prompt which generates the final analysis and returned back to the extension.
+# Issues
 
-The agent is deployed to Firebase Functions and can be easily called from the extension.
+Currently this approach is on alpha and requires a lot of work to be added. Here's some of the issues faced...
 
-## Firebase
+- Currently **Chrome Built-in Ai** is only on Chrome Dev/Canary channels and not yet stable.
+- The model doesn't generate structured outputs so the check is based on the model answering by either _Yes_ or _No_
+  - Currently the model throws an error when the answer is _No_ for some reason (``)
+  - That's why the extension assumes that every output that doesn't equal "_Yes_" or a crash as the website not being recognized as a well known website and continues with the primitive check.
+- Other model related crashes like: model not being properly loaded, unknwonErrors...etc.
 
-A Serverless backend which handles all of the Authentication (Register and Login), Function calling to communicate with the agent and Firestore (Database) which saves reports of each checked domain name. This database is used for future checks so the extension would first check if the domain name already exists, if not it calls the agent for the analysis and saves the results.
+# The Plan
+
+- Make the current approach stable (after the release of the stable version of **Chrome Built-in Ai**)
+- Improve on the approach on multiple stages
+  - Properly detect all possible cases: well known legit/scam, potentially legit/scam
+  - Do parts of the check within the extension then passing the pre-analysis report to the 
+  - Do the whole check within the extension (locally)
 
 This would make the extension auto-populate the database which first, saves token costs and second, builds a database that can be used for other projects later.
 
