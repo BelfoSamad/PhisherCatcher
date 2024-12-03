@@ -13,7 +13,7 @@
     "background": {
       "service_worker": "background.js"
     },
-    "trial_tokens": ["Aov78hLqdzntlIGdapeMetPx61Bk9YPsiBnoK15kG893Kp9XNc3XiEH+rSGoeaaDS61fydfclB2X2u7o5ZfVrwoAAAB4eyJvcmlnaW4iOiJjaHJvbWUtZXh0ZW5zaW9uOi8vZW1obm1wbWNsb2NwYW1raWxrZmRkaXBvbGZkbmhmY2giLCJmZWF0dXJlIjoiQUlQcm9tcHRBUElGb3JFeHRlbnNpb24iLCJleHBpcnkiOjE3NjA0ODYzOTl9"],
+    "trial_tokens": ["Ao7jAOoiBffqACcnGFoeRO4eZu/u3jMeMx1JC+FIVoneMTgp0JqSDqVfzrzBM2iTGxYbVk6orfaRLnRYs4ykAwwAAAB4eyJvcmlnaW4iOiJjaHJvbWUtZXh0ZW5zaW9uOi8vbWZnZ25rb2dpbmpkaHBmZ2FvcGJtZ2ViamFrY2lkYmoiLCJmZWF0dXJlIjoiQUlQcm9tcHRBUElGb3JFeHRlbnNpb24iLCJleHBpcnkiOjE3NjA0ODYzOTl9"],
     "side_panel": {
       "default_path": "./sidepanel/index.html"
     },

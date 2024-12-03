@@ -1,7 +1,6 @@
 import axios from "axios";
 import moment from "moment";
 import {parse} from "csv-parse/sync";
-import {runPrompt} from "./prompt_api";
 
 export async function checkDomainWording(domain) {
     const suspicions = [];
@@ -12,7 +11,7 @@ export async function checkDomainWording(domain) {
     suspicions.push(`Mixed numbers & letters: ${/\d/.test(domain) && /[a-z]/.test(domain) ? "Yes" : "No"}`);
     suspicions.push(`Excessive subdomains: ${domain.split(".").length - 2 > 2 ? "Yes" : "No"}`);
     suspicions.push(`Puny code used: ${domain.startsWith("xn--") || /[^\x00-\x7F]/.test(domain) ? "Yes" : "No"}`);
-    
+
     return suspicions;
 }
 
@@ -32,7 +31,7 @@ const checkAddressFormat = (domain) => {
                 ipv6CRegex.test(domain) ? "Compressed IPV6" : "Normal";
 };
 
-export async function checkRecords(domain, apiKey) {
+export async function checkRecords(apiKey, domain) {
     const suspicions = [];
 
     // check WHOIS
@@ -41,7 +40,7 @@ export async function checkRecords(domain, apiKey) {
         if (whoisInfo.domainAge != null) suspicions.push(`Domain Name Age: ${whoisInfo.domainAge} Years`);
         else suspicions.push(`Domain Name Age: Not Found`);
     } catch (err) {
-        console.log("An error caught, ignore!. Error: " + err);
+        //Do nothing
     }
 
     // check TLD
@@ -51,7 +50,7 @@ export async function checkRecords(domain, apiKey) {
             suspicions.push(`Suspecious TLD of Severity: ${tldInfo.tldSuspicionSeverity}`);
         }
     } catch (err) {
-        console.log("An error caught, ignore!. Error: " + err);
+        //Do nothing
     }
 
     // check SSL
@@ -63,13 +62,14 @@ export async function checkRecords(domain, apiKey) {
             suspicions.push(`SSL Certificate Issuer is Trusted: ${sslInfo.isIssuerTrusted ? "Yes" : "No"}`);
         }
     } catch (err) {
-        console.log("An error caught, ignore!. Error: " + err);
+        /*Do nothing*/
     }
 
     return suspicions;
 }
 
 const checkWHOIS = async (apiKey, domain) => {
+    console.log(apiKey);
     const response = await axios.get("https://api.jsonwhoisapi.com/v1/whois", {
         headers: {
             Accept: "application/json",
@@ -134,7 +134,6 @@ const checkSSL = async (domain) => {
             }
         });
         const data = response.data;
-        console.log(data);
 
         if (data == null || data.status != "ok") resolve({isCertificateValid: false})
         else resolve({

@@ -1,16 +1,18 @@
 import {app, defaults} from '../configs';
 import {getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword} from 'firebase/auth/web-extension';
 import {getFirestore, getDoc, setDoc, doc} from 'firebase/firestore';
+import {getFunctions, httpsCallable} from 'firebase/functions';
+import {getRemoteConfig, fetchAndActivate, getValue} from "firebase/remote-config";
 import {checkDomainWording, checkRecords} from './report_gen';
 import {runPrompt} from './prompt_api';
 
 const auth = getAuth(app);
 const db = getFirestore(app);
+const functions = getFunctions(app);
+const configs = getRemoteConfig(app);
 
-// listen to auth state
-auth.onAuthStateChanged((user) => {
-    chrome.runtime.sendMessage({target: "background", action: "userIn", isLoggedIn: user != null});
-});
+// fetch and activate configs (to get APIKey)
+await fetchAndActivate(configs);
 
 // Listen for messages from the background service worker
 chrome.runtime.onMessage.addListener(handleChromeMessages);
@@ -59,10 +61,12 @@ function handleChromeMessages(message, _sender, sendResponse) {
                 try {
                     getDoc(doc(db, "websites", message.domain)).then(async querySnapshot => {
                         if (!querySnapshot.exists()) {
+                            // get WHOIS APIKey
+                            const apiKey = getValue(configs, "WHOIS_API_KEY").asString();
                             // generate report
                             const report = [
                                 ...(await checkDomainWording(message.domain)), // analyse wording
-                                ...(await checkRecords(message.domain)), // analyse records
+                                ...(await checkRecords(apiKey, message.domain)), // analyse records
                             ];
 
                             // review with in-device Prompt API
@@ -78,6 +82,12 @@ function handleChromeMessages(message, _sender, sendResponse) {
                                     try {
                                         // Parse the JSON string into a JavaScript object
                                         const analysis = JSON.parse(jsonString);
+
+                                        // properly analyzed, save results
+                                        await setDoc(doc(db, "websites", message.domain), analysis);
+
+                                        // send results back
+                                        analysis["id"] = message.domain;
                                         sendResponse({error: null, analysis: analysis});
                                     } catch (error) {
                                         // En error happened converting text to JSON
@@ -97,8 +107,6 @@ function handleChromeMessages(message, _sender, sendResponse) {
                                     analysis["id"] = message.domain;
                                     sendResponse({error: null, analysis: analysis});
                                 });
-                            } else {
-                                //TODO: Checked locally, save results
                             }
                         } else {
                             const analysis = querySnapshot.data();
@@ -120,5 +128,8 @@ Based on the following report about this domain name '${domain}' and your analys
 The Report ----
 ${report}
 ---
-Return the response as a JSON which is structured as follow: {percentage: number, reasons: string[] | null, decision: string} where percentage is the percentage of suspicion of the domain, a simple list of reasons why would the website be suspicious (if website is legit then return null) and the decision which is either: Legit, Suspicious or Malicious.
+Your response must be only a JSON object with the following structure:
+- percentage: A number (0 to 100) representing the suspicion level (higher values indicate greater suspicion).
+- decision: A string with one of three values: "Legit", "Suspicious", or "Malicious".
+- reasons: An array of strings explaining why the website is not legit based on the report and other factors, empty if Domain is legit
 `
