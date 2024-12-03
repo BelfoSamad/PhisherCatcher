@@ -27,10 +27,6 @@ export class CheckerService {
     return this.analysis;
   }
 
-  checkWebsite() {
-    chrome.runtime.sendMessage({target: "background", action: "check"});
-  }
-
   blockUnblockWebsite() {
     chrome.runtime.sendMessage({target: "background", action: "block"});
   }

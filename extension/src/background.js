@@ -16,16 +16,6 @@ chrome.runtime.onMessage.addListener((message) => {
       case "userIn":
         userLoggedIn = message.isLoggedIn;
         return true;
-      case "check":
-        // get active tab
-        chrome.tabs.query({active: true, currentWindow: true}, (activeTabs) => {
-          const activeTab = activeTabs[0];
-          // extract domain
-          const domain = new URL(activeTab.url).hostname.split(":")[0].toLowerCase();
-          // verify if check is needed, then do check
-          if (preCheck(activeTab.url, domain)) doCheck(domain, true);
-        });
-        break;
       case "block":
         blockTab(activeTabId);
         break;
@@ -84,14 +74,15 @@ function preCheck(url, domain) {
   return true;
 }
 
-async function doCheck(domain, manualCheck) {
+async function doCheck(domain) {
   // check only if user is logged-in
   if (userLoggedIn) {
     // get settings
-    const settings = await chrome.storage.local.get(["enableAutoCheck", "enableAutoBlock", "enableForceBlock"]);
+    const settings = await chrome.storage.local.get(["enableAutoBlock", "enableForceBlock"]);
+
     // start check (and animations)
     startAnimations(activeTabId);
-    const result = await checkUrl(domain, (settings['enableAutoCheck'] ?? defaults.enableAutoCheck) || manualCheck);
+    const result = await checkUrl(domain);
     if (result == undefined) sendAnalysis(undefined, true); // send to sidepanel (manual check)
     else if (result.error != null) sendError(result.error)
     else {

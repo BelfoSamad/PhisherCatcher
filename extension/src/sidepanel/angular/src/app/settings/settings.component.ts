@@ -32,15 +32,13 @@ export class SettingsComponent {
 
   ngOnInit(): void {
     this.settingsForm = this.fb.group({
-      enableAutoCheck: false,
       enableAutoBlock: false,
       enableForceBlock: false,
     });
 
     // get settings from storage
-    chrome.storage.local.get(["enableAutoCheck", "enableAutoBlock", "enableForceBlock"], (res) => {
+    chrome.storage.local.get(["enableAutoBlock", "enableForceBlock"], (res) => {
       this.settingsForm?.setValue({
-        enableAutoCheck: res['enableAutoCheck'] ?? true,
         enableAutoBlock: res['enableAutoBlock'] ?? true,
         enableForceBlock: res['enableForceBlock'] ?? true,
       });
@@ -49,7 +47,6 @@ export class SettingsComponent {
 
   onSubmit(): void {
     const settings = {
-      enableAutoCheck: this.settingsForm?.value.enableAutoCheck,
       enableAutoBlock: this.settingsForm?.value.enableAutoBlock,
       enableForceBlock: this.settingsForm?.value.enableForceBlock,
     };

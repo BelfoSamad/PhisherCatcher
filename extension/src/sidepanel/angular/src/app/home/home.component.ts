@@ -32,7 +32,6 @@ export class HomeComponent implements OnInit {
   analysis: any | undefined | null;
   checkError = false;
   isAnalyzing: boolean = false;
-  manualCheckAllowed: boolean = false;
   currentIndex = -1;
 
   //Constructor
@@ -47,7 +46,6 @@ export class HomeComponent implements OnInit {
         if (message.target == "sidepanel") switch (message.action) {
           case "analysis":
             this.analysis = message.analysis;
-            this.manualCheckAllowed = message.allowCheck;
             this.isAnalyzing = false;
             this.checkError = false;
             break;
@@ -65,10 +63,6 @@ export class HomeComponent implements OnInit {
         }
       });
     });
-  }
-
-  analyzeWebsite() {
-    this.checkerService.checkWebsite();
   }
 
   getIntValue(percentage: string) {

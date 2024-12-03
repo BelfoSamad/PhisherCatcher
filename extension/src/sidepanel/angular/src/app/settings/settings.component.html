@@ -7,10 +7,6 @@
     </mat-toolbar>
     <form [formGroup]="settingsForm!!" (ngSubmit)="onSubmit()">
         <div class="single_setting">
-            <span>Enable Auto Check</span>
-            <mat-slide-toggle formControlName="enableAutoCheck"></mat-slide-toggle>
-        </div>
-        <div class="single_setting">
             <span>Enable Auto Block</span>
             <mat-slide-toggle formControlName="enableAutoBlock"></mat-slide-toggle>
         </div>

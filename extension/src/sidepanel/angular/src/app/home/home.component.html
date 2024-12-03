@@ -22,16 +22,7 @@
                 <div class="animated-gradient"></div>
             </div>
         }@else {
-        @if(manualCheckAllowed) {
-        <div class="analyze-message">
-            <p class="message">Auto-check is disabled. Click 'Analyze' to verify the URL!</p>
-            <button class="analyze" mat-flat-button (click)="analyzeWebsite()">
-                <span class="mat-label-large">Analyze</span>
-            </button>
-        </div>
-        }@else {
         <p class="message loading-message">Verifying the URL. If this takes too long, please refresh the page!</p>
-        }
         }
         } @else if (analysis === null) {
         <p class="message">This tab is either a New Tab or a Chrome system tab (e.g., settings, extensions, etc.).</p>
