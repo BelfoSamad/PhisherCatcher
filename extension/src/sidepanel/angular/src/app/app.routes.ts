@@ -8,7 +8,7 @@ import {BoardingComponent} from './boarding/boarding.component';
 
 export const routes: Routes = [
     {
-        path: 'boarding',
+        path: '',
         component: BoardingComponent,
         title: 'Boarding'
     },
@@ -23,7 +23,7 @@ export const routes: Routes = [
         title: 'Register'
     },
     {
-        path: '',
+        path: 'home',
         component: HomeComponent,
         title: 'Home',
         canActivate: [AuthGuard],

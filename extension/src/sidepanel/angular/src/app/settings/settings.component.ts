@@ -1,9 +1,8 @@
 ///<reference types="chrome"/>
-import {Component, inject} from '@angular/core';
+import {Component} from '@angular/core';
 import {FormBuilder, FormGroup, FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {MatButtonModule} from '@angular/material/button';
 import {MatSlideToggleModule} from '@angular/material/slide-toggle';
-import {MatSnackBar} from '@angular/material/snack-bar';
 import {Router} from '@angular/router';
 import {MatToolbarModule} from '@angular/material/toolbar';
 import {MatIconModule} from '@angular/material/icon';
@@ -23,8 +22,6 @@ import {MatIconModule} from '@angular/material/icon';
   styleUrl: './settings.component.scss'
 })
 export class SettingsComponent {
-  private _snackBar = inject(MatSnackBar);
-
   //Declarations
   settingsForm: FormGroup | undefined;
 
@@ -53,12 +50,11 @@ export class SettingsComponent {
     chrome.storage.local.set(settings, () => {
       // sync with firestore
       chrome.runtime.sendMessage({target: "offscreen", action: "syncSettings", settings: settings});
-      //TODO: show snackbar
-      this.router.navigate(['']);
+      this.router.navigate(['/home']);
     });
   }
 
   goBack() {
-    this.router.navigate(['']);
+    this.router.navigate(['/home']);
   }
 }

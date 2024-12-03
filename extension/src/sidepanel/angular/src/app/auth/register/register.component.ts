@@ -49,7 +49,7 @@ export class RegisterComponent implements OnInit {
         this.registerForm!!.value.password
       ).then((response: any) => {
         this.registerLoading = false
-        if (response.done) this.router.navigate(['']) //go home
+        if (response.done) this.router.navigate(['/home']) //go home
         else this._snackBar.open(response.error);
       });
     } else {

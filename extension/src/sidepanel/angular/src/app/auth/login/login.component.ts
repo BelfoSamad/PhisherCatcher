@@ -48,7 +48,7 @@ export class LoginComponent implements OnInit {
         this.loginForm!!.value.password
       ).then((response: any) => {
         this.loginLoading = false
-        if (response.done) this.router.navigate(['']); //go home
+        if (response.done) this.router.navigate(['/home']); //go home
         else this._snackBar.open(response.error);
       });
     } else {
