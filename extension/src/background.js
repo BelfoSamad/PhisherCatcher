@@ -5,33 +5,7 @@ import {startAnimations, checkUrl, sendAnalysis, stopAnimations, blockTab, sendE
 let creating; // A global promise to avoid concurrency issues
 let activeTabId = -1;
 let userLoggedIn = false;
-let localAiAvailable = false;
 const tabs = new Map();
-
-//------------------------------- Starting
-chrome.runtime.onStartup.addListener(() => {
-  // browser starts, check ai capabilities if available
-  checkAiCapabilities();
-});
-chrome.runtime.onInstalled.addListener((details) => {
-  // extension installed/updated, check ai capabilities if available
-  checkAiCapabilities();
-});
-
-async function checkAiCapabilities() {
-  if (!('aiOriginTrial' in chrome)) {
-    console.log("Error: chrome.aiOriginTrial not supported in this browser");
-    return;
-  }
-  const defaults = await chrome.aiOriginTrial.languageModel.capabilities();
-  if (defaults.available !== 'readily') {
-    console.log(`Model not yet available (current state: "${defaults.available}")`);
-    return;
-  }
-
-  // everything good, AI available
-  localAiAvailable = true;
-}
 
 //------------------------------- Initiation
 setupOffscreenDocument("./offscreen/offscreen.html");
@@ -117,7 +91,7 @@ async function doCheck(domain, manualCheck) {
     const settings = await chrome.storage.local.get(["enableAutoCheck", "enableAutoBlock", "enableForceBlock"]);
     // start check (and animations)
     startAnimations(activeTabId);
-    const result = await checkUrl(domain, (settings['enableAutoCheck'] ?? defaults.enableAutoCheck) || manualCheck, localAiAvailable);
+    const result = await checkUrl(domain, (settings['enableAutoCheck'] ?? defaults.enableAutoCheck) || manualCheck);
     if (result == undefined) sendAnalysis(undefined, true); // send to sidepanel (manual check)
     else if (result.error != null) sendError(result.error)
     else {
