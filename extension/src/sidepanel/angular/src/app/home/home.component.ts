@@ -49,6 +49,7 @@ export class HomeComponent implements OnInit {
             else {
               this.isAnalyzing = tabDetails?.isLoading ?? false;
               this.analysis = tabDetails?.analysis;
+              this.currentIndex = -1;
             }
             break;
           case "error":

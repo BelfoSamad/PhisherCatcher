@@ -81,7 +81,7 @@ async function doCheck(domain) {
 
   // starting check (animations)
   startAnimations(activeTabId);
-  tabs.set(summaryTabId, {...tabs.get(summaryTabId), isLoading: true});
+  tabs.set(summaryTabId, {isLoading: true});
   sendTabDetails(tabs.get(summaryTabId));
 
   // analyzing website
@@ -131,12 +131,17 @@ async function setupOffscreenDocument(path) {
   if (creating) {
     await creating;
   } else {
-    creating = chrome.offscreen.createDocument({
-      url: path,
-      reasons: ['DOM_SCRAPING'],
-      justification: 'this document is used to communicate with firebase (Auth, Firestore, Functions)',
-    });
-    await creating;
-    creating = null;
+    try {
+        creating = chrome.offscreen.createDocument({
+            url: path,
+            reasons: ['DOM_SCRAPING'],
+            justification: 'this document is used to communicate with firebase (Auth, Firestore, Functions)',
+        });
+        await creating;
+        creating = null;
+    } catch (e) {
+        //trying to re-create offscreen document, stop
+        creating = null
+    }
   }
 }

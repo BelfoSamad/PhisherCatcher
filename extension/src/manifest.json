@@ -2,7 +2,7 @@
     "manifest_version": 3,
     "name": "PhisherCatcher",
     "description": "PhisherCatcher is an extension that uses LLM to analyze website details like domain, SSL, WHOIS data to detect phishing attempts.",
-    "version": "1.0.0",
+    "version": "1.1.0",
     "permissions": ["tabs", "activeTab", "sidePanel", "offscreen", "storage", "webNavigation", "aiLanguageModelOriginTrial"],
     "icons": {
       "16": "./images/icon16.png",
